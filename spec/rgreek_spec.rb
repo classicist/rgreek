@@ -3,6 +3,6 @@ require "spec_helper"
 
 describe "rGreek" do
   it "should do something" do
-    pending
+    Lemma.new.should_not be_nil
   end
 end

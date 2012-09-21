@@ -1,1 +1,2 @@
-require 'rGreek'
+require 'rgreek'
+include RGreek
