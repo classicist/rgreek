@@ -7,10 +7,16 @@ describe "rGreek" do
     Parse.new.should_not be_nil    
   end
   
-  it "should get all parses for a lemma" do
+  it "should get all parses for kai/" do
     lemma = Lemma.find_by_headword "kai/"
     parses = Parse.find_all_by_lemma_id lemma.id
+    parses.length.should == 5
+  end
+  
+  it "should get all parses for le/gw" do
+    lemma = Lemma.find_by_headword "le/gw"
+    parses = Parse.where("lemma_id = ?", lemma.id)
     puts parses.to_yaml
-    parses.length.should == 1
+    parses.length.should == 5
   end
 end
