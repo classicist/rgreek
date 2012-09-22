@@ -2,8 +2,6 @@
 
 module RGreek
   class Transcoder
-  #  UNFCC = File.read("#{__FILE__}/..data/UnicodeCConverter.properties")
-  LETTER = /[a-zA-Z]/
     def self.convert(betacode)
       current_index = 0
       betacode = tokenize(betacode)
@@ -39,7 +37,8 @@ module RGreek
         current_index += 1
         current_index      
     end
-    
+
+    LETTER = /[a-zA-Z ]/    
     def self.tokenize(betacode)      
       current_index = 0
       betacode.split("").map do |current_char|
@@ -50,7 +49,7 @@ module RGreek
         is_letter           = match?(current_char, LETTER) && !isBetaCodePrefix(last_char) && !match?(next_char, /\d/)
         is_capital          = match?(current_char, LETTER) && match?(last_char, /\*/) && !match?(next_char, /\d/)
         is_diacrital        = isBetaCodeDiacritical(current_char)
-        is_longum_breve     = match?(current_char, /\d/) && match?(last_char, /\d/) && match?(penultimate_char, /\%/)
+#        is_longum_breve     = match?(current_char, /\d/) && match?(last_char, /\d/) && match?(penultimate_char, /\%/)
         is_crazy_sigma      = match?(current_char, /\d/) && match?(last_char, /S/) 
         is_kop_or_samp      = match?(current_char, /\d/) && match?(last_char, /#/) 
         is_punctuation      = match?(current_char, /[#\:;']/) && !match?(next_char, /\d/)
@@ -64,8 +63,8 @@ module RGreek
            lookup(current_char)
         elsif is_capital || is_a_critical_mark
            lookup(last_char + current_char)
-        elsif is_longum_breve
-          lookup(penultimate_char + last_char + current_char)
+#        elsif is_longum_breve
+#          lookup(penultimate_char + last_char + current_char)
         elsif is_crazy_sigma || is_kop_or_samp
           token = last_char + current_char
           token = penultimate_char + token if match?(penultimate_char, /\*/)
@@ -160,11 +159,12 @@ BETA_CODES = Hash[
 "+" => "diaer", #lone diaeresis
 "|" => "isub",
 
+" " => "space",
 "%" => "crux",
 "%2" => "asterisk",
 "%5" => "longVerticalBar",
-"%40" => "longum",
-"%41" => "breve",
+#"%40" => "longum",
+#"%41" => "breve",
 
 "S1" => "sigmaMedial",
 "S2" => "sigmaFinal",
@@ -194,9 +194,6 @@ BETA_CODES = Hash[
 "[4" => "openingDoubleSquareBracket",
 "]4" => "closingDoubleSquareBracket"
 ]
-
-GREEK_VOWELS  = ["alpha", "Alpha", "epsilon", "Epsilon", "eta", "Eta", "iota", "Iota", "omicron", "Omicron", "upsilon", "Upsilon", "omega", "Omega"]
-GREEK_ACCENTS = ["oxy" ,"bary" ,"peri" ,"lenis","asper","diaer", "isub"]
 
 UNICODES = Hash[
 "alpha" => "\u03B1",
@@ -491,6 +488,7 @@ UNICODES = Hash[
 "Omega_lenis_peri_isub" => "\u1FAE",
 "Omega_asper_peri_isub" => "\u1FAF",
 
+"space" => "\u0020",
 "prime" => "\u0374",
 "raisedDot"  => "\u0387",
 "semicolon" => "\u037E",
