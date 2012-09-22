@@ -2,7 +2,7 @@
 
 module RGreek
   class Transcoder
-    def self.convert(betacode)
+    def self.betacode_to_unicode(betacode)
       current_index = 0
       betacode = tokenize(betacode)
       unicode = ""
@@ -15,6 +15,14 @@ module RGreek
       unicode
     end
     
+    def self.unicode_to_betacode(unicode)
+      unicode.split("").map do |unichar|
+        beta_token = REVERSE_UNICODES[unichar]
+        beta_token.split("_").map { |token| REVERSE_BETA_CODES[token] }.join
+      end.join.downcase
+    end
+
+private    
     def self.combine_characters(code, index, codes)
       next_index = index + 1
       next_index_in_bounds = codes.length - 1 >= next_index
@@ -39,7 +47,7 @@ module RGreek
     end
 
     LETTER = /[a-zA-Z ]/    
-    def self.tokenize(betacode)      
+    def self.tokenize(betacode)
       current_index = 0
       betacode.split("").map do |current_char|
         penultimate_char    = current_index - 1 > 0               ? betacode[current_index - 2] : ""   
@@ -49,7 +57,6 @@ module RGreek
         is_letter           = match?(current_char, LETTER) && !isBetaCodePrefix(last_char) && !match?(next_char, /\d/)
         is_capital          = match?(current_char, LETTER) && match?(last_char, /\*/) && !match?(next_char, /\d/)
         is_diacrital        = isBetaCodeDiacritical(current_char)
-#        is_longum_breve     = match?(current_char, /\d/) && match?(last_char, /\d/) && match?(penultimate_char, /\%/)
         is_crazy_sigma      = match?(current_char, /\d/) && match?(last_char, /S/) 
         is_kop_or_samp      = match?(current_char, /\d/) && match?(last_char, /#/) 
         is_punctuation      = match?(current_char, /[#\:;']/) && !match?(next_char, /\d/)
@@ -60,25 +67,22 @@ module RGreek
         current_index += 1
 
         if is_letter || is_punctuation || is_diacrital || is_a_crux          
-           lookup(current_char)
+           lookup_betacode(current_char)
         elsif is_capital || is_a_critical_mark
-           lookup(last_char + current_char)
-#        elsif is_longum_breve
-#          lookup(penultimate_char + last_char + current_char)
+           lookup_betacode(last_char + current_char)
         elsif is_crazy_sigma || is_kop_or_samp
           token = last_char + current_char
           token = penultimate_char + token if match?(penultimate_char, /\*/)
-          lookup(token)
+          lookup_betacode(token)
         elsif is_a_bracket
           token = current_char
           token += next_char if match?(next_char, /\d/)
-          lookup(token)
+          lookup_betacode(token)
         end
       end.compact
     end
   
-  
-    def self.lookup(code)
+    def self.lookup_betacode(code)
       BETA_CODES[code.upcase]
     end
     
@@ -166,7 +170,7 @@ BETA_CODES = Hash[
 #"%40" => "longum",
 #"%41" => "breve",
 
-"S1" => "sigmaMedial",
+#"S1" => "sigmaMedial",
 "S2" => "sigmaFinal",
 "S3" => "sigmaLunate",
 "*S3" => "SigmaLunate",
@@ -251,7 +255,6 @@ UNICODES = Hash[
 "Sampi" => "\u03E0",
 "stigma" => "\u03DB",
 "Stigma" => "\u03DA",
-"sigmaFinalFixed" => "\u03C2",
 
 "oxy"   => "\u1FFD",
 "bary"  => "\u1FEF",
@@ -272,10 +275,11 @@ UNICODES = Hash[
 "diaer_peri" => "\u1FC1",
 
 "sigmaMedial" => "\u03C3",
-"sigmaMedialFixed" => "\u03C3",
 "sigmaFinal" => "\u03C2",
 "sigmaLunate" => "\u03F2",
 "SigmaLunate" => "\u03F2",
+#"sigmaFinalFixed" => "\u03C2",
+#"sigmaMedialFixed" => "\u03C3",
 
 "rho_asper" => "\u1FE5",
 "Rho_asper" => "\u1FEC",
@@ -508,6 +512,8 @@ UNICODES = Hash[
 "asterisk" => "\u002A",
 "longVerticalBar" => "\u007C",
 ]
-  
+
+REVERSE_BETA_CODES ||= BETA_CODES.invert
+REVERSE_UNICODES   ||= UNICODES.invert
   end#EOC
 end#EOM

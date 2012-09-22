@@ -22,13 +22,8 @@ describe "The Betacode Tokenizer" do
     Transcoder.tokenize("*kai/").should == ["Kappa", "alpha", "iota", "oxy"]
   end
   
-  #No Unicode Symbols provided for these, so I am commenting them out for the moment
-  #it "should give the name of a betacode token for longum and breve" do
-  #  Transcoder.tokenize("%40%41").should == ["longum", "breve"]    
-  #end
-  
   it "should give the name of a betacode token for crazy sigma" do
-    Transcoder.tokenize("S1S2S3").should == ["sigmaMedial","sigmaFinal", "sigmaLunate"]
+    Transcoder.tokenize("SS2S3").should == ["sigmaMedial","sigmaFinal", "sigmaLunate"]
     Transcoder.tokenize("S3*S3").should == ["sigmaLunate", "SigmaLunate"]
   end
 
@@ -52,18 +47,24 @@ end
 describe "Betacode to Unicode C Conversion" do
   
   it "should convert betacode letters to unicode without greek accents" do
-    Transcoder.convert("kai").should == "και"
+    Transcoder.betacode_to_unicode("kai").should == "και"
   end
   
   it "should convert betacode letters to unicode with combined greek accents over vowels" do
-    Transcoder.convert("le/gw").should == "λέγω"
-    Transcoder.convert("kai/").should == "καί"
+    Transcoder.betacode_to_unicode("le/gw").should == "λέγω"
+    Transcoder.betacode_to_unicode("kai/").should == "καί"
   end
   
   it "should convert betacode letters to unicode with combined greek accents over vowels with breathing marks, spaces, and wierd punctuation" do
-    Transcoder.convert("[4*h)/xw]4\:").should == "⟦Ἤχω⟧·"
-    Transcoder.convert("*h)/xw au)tw=|").should == "Ἤχω αὐτῷ"
-    Transcoder.convert("gnw=qi %5 seau/ton%").should == "γνῶθι | σεαύτον†"    
+    Transcoder.betacode_to_unicode("[4*h)/xw]4\:").should == "⟦Ἤχω⟧·"
+    Transcoder.betacode_to_unicode("*h)/xw au)tw=|").should == "Ἤχω αὐτῷ"
+    Transcoder.betacode_to_unicode("gnw=qi %5 seau/ton%").should == "γνῶθι | σεαύτον†"    
+  end
+  
+  it "should convert unicode to betacode" do
+    Transcoder.unicode_to_betacode("⟦Ἤχω⟧·").should == "[4*h)/xw]4\:"
+    Transcoder.unicode_to_betacode("Ἤχω αὐτῷ").should == "*h)/xw au)tw=|"
+    Transcoder.unicode_to_betacode("γνῶθι | σεαύτον†").should == "gnw=qi %5 seau/ton%"
   end
   
 end
