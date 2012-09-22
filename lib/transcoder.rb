@@ -25,32 +25,20 @@ module RGreek
         
         current_index += 1
 
-        if is_letter           
+        if is_letter || is_punctuation || is_diacrital || is_a_crux          
            lookup(current_char)
-        elsif is_capital
+        elsif is_capital || is_a_critical_mark
            lookup(last_char + current_char)
-        elsif is_diacrital
-           lookup(current_char)
         elsif is_longum_breve
           lookup(penultimate_char + last_char + current_char)
-        elsif is_crazy_sigma
+        elsif is_crazy_sigma || is_kop_or_samp
           token = last_char + current_char
           token = penultimate_char + token if match?(penultimate_char, /\*/)
           lookup(token)
-        elsif is_kop_or_samp
-          token = last_char + current_char
-          token = penultimate_char + token if match?(penultimate_char, /\*/)
-          lookup(token)  
-        elsif is_punctuation
-          lookup(current_char)
         elsif is_a_bracket
           token = current_char
           token += next_char if match?(next_char, /\d/)
           lookup(token)
-        elsif is_a_crux
-          lookup(current_char)
-        elsif is_a_critical_mark
-          lookup(last_char + current_char)
         end
       end.compact
     end
