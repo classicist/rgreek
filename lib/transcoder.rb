@@ -1,0 +1,479 @@
+# encoding: UTF-8
+
+module RGreek
+  class Transcoder
+  #  UNFCC = File.read("#{__FILE__}/..data/UnicodeCConverter.properties")
+  LETTER = /[a-zA-Z]/
+  
+    def self.tokenize(betacode)      
+      current_index = 0
+      betacode.split("").map do |current_char|
+        penultimate_char    = current_index - 1 > 0               ? betacode[current_index - 2] : ""   
+        last_char           = current_index     > 0               ? betacode[current_index - 1] : ""
+        next_char           = current_index     < betacode.length ? betacode[current_index + 1] : ""
+                            
+        is_letter           = match?(current_char, LETTER) && !isBetaCodePrefix(last_char) && !match?(next_char, /\d/)
+        is_capital          = match?(current_char, LETTER) && match?(last_char, /\*/) && !match?(next_char, /\d/)
+        is_diacrital        = isBetaCodeDiacritical(current_char)
+        is_longum_breve     = match?(current_char, /\d/) && match?(last_char, /\d/) && match?(penultimate_char, /\%/)
+        is_crazy_sigma      = match?(current_char, /\d/) && match?(last_char, /S/) 
+        is_kop_or_samp      = match?(current_char, /\d/) && match?(last_char, /#/) 
+        is_punctuation      = match?(current_char, /[#\:;']/) && !match?(next_char, /\d/)
+        is_a_bracket        = match?(current_char, /\[|\]/)
+        is_a_crux           = match?(current_char, /\%/) && !match?(next_char, /\d/)
+        is_a_critical_mark  = match?(current_char, /\d/) && match?(last_char, /\%/) && !match?(next_char, /\d/)        
+        
+        current_index += 1
+
+        if is_letter           
+           lookup(current_char)
+        elsif is_capital
+           lookup(last_char + current_char)
+        elsif is_diacrital
+           lookup(current_char)
+        elsif is_longum_breve
+          lookup(penultimate_char + last_char + current_char)
+        elsif is_crazy_sigma
+          token = last_char + current_char
+          token = penultimate_char + token if match?(penultimate_char, /\*/)
+          lookup(token)
+        elsif is_kop_or_samp
+          token = last_char + current_char
+          token = penultimate_char + token if match?(penultimate_char, /\*/)
+          lookup(token)  
+        elsif is_punctuation
+          lookup(current_char)
+        elsif is_a_bracket
+          token = current_char
+          token += next_char if match?(next_char, /\d/)
+          lookup(token)
+        elsif is_a_crux
+          lookup(current_char)
+        elsif is_a_critical_mark
+          lookup(last_char + current_char)
+        end
+      end.compact
+    end
+  
+  
+    def self.lookup(code)
+      BETA_CODES[code.upcase]
+    end
+    
+    def self.match?(char, pattern)
+      (char =~ pattern) != nil
+    end
+    
+    def self.isBetaCodeDiacritical(code)
+        [')', '(', '/', '\\', '=', '+', '|'].include?(code)
+    end
+    
+    def self.isBetaCodePrefix(code)
+        ['*', '#', '%'].include?(code)  
+    end
+  
+BETA_CODES = Hash[
+"A" => "alpha",
+"B" => "beta",
+"G" => "gamma",
+"D" => "delta",
+"E" => "epsilon",
+"Z" => "zeta",
+"H" => "eta",
+"Q" => "theta",
+"I" => "iota",
+"K" => "kappa",
+"L" => "lambda",
+"M" => "mu",
+"N" => "nu",
+"C" => "xi",
+"O" => "omicron",
+"P" => "pi",
+"R" => "rho",
+"S" => "sigmaMedial",
+"T" => "tau",
+"U" => "upsilon",
+"F" => "phi",
+"X" => "chi",
+"Y" => "psi",
+"W" => "omega",
+"V" => "digamma",
+
+"*A" => "Alpha", #captials
+"*B" => "Beta",
+"*G" => "Gamma",
+"*D" => "Delta",
+"*E" => "Epsilon",
+"*Z" => "Zeta",
+"*H" => "Eta",
+"*Q" => "Theta",
+"*I" => "Iota",
+"*K" => "Kappa",
+"*L" => "Lambda",
+"*M" => "Mu",
+"*N" => "Nu",
+"*C" => "Xi",
+"*O" => "Omicron",
+"*P" => "Pi",
+"*R" => "Rho",
+"*S" => "Sigma",
+"*T" => "Tau",
+"*U" => "Upsilon",
+"*F" => "Phi",
+"*X" => "Chi",
+"*Y" => "Psi",
+"*W" => "Omega",
+"*V" => "Digamma",
+
+"/" => "oxy",   #lone acute
+"\\" => "bary", #lone grave 
+"\=" => "peri", #lone circumflex
+")" => "lenis", #lone smooth breathing 
+"(" => "asper", #lone rough breathing
+"+" => "diaer", #lone diaeresis
+"|" => "isub",
+
+"%" => "crux",
+"%2" => "asterisk",
+"%5" => "longVerticalBar",
+"%40" => "longum",
+"%41" => "breve",
+
+"S1" => "sigmaMedial",
+"S2" => "sigmaFinal",
+"S3" => "sigmaLunate",
+"*S3" => "SigmaLunate",
+
+"#2" => "stigma",
+"*#2" => "Stigma",
+"#3" => "koppa",
+"*#3" => "Koppa",
+"#5" => "sampi",
+"*#5" => "Sampi",
+
+"#" => "prime",
+"\:" => "raisedDot",
+";" => "semicolon",
+"'" => "elisionMark",
+
+"[" => "openingSquareBracket",
+"]" => "closingSquareBracket",
+"[1" => "openingParentheses",
+"]1" => "closingParentheses",
+"[2" => "openingAngleBracket",
+"]2" => "closingAngleBracket",
+"[3" => "openingCurlyBracket",
+"]3" => "closingCurlyBracket",
+"[4" => "openingDoubleSquareBracket",
+"]4" => "closingDoubleSquareBracket"
+]
+
+UNICODES = Hash[
+"alpha" => "\u03B1",
+"beta" => "\u03B2",
+"gamma" => "\u03B3",
+"delta" => "\u03B4",
+"epsilon" => "\u03B5",
+"zeta" => "\u03B6",
+"eta" => "\u03B7",
+"theta" => "\u03B8",
+"iota" => "\u03B9",
+"kappa" => "\u03BA",
+"lambda" => "\u03BB",
+"mu" => "\u03BC",
+"nu" => "\u03BD",
+"xi" => "\u03BE",
+"omicron" => "\u03BF",
+"pi" => "\u03C0",
+"rho" => "\u03C1",
+"tau" => "\u03C4",
+"upsilon" => "\u03C5",
+"phi" => "\u03C6",
+"chi" => "\u03C7",
+"psi" => "\u03C8",
+"omega" => "\u03C9",
+"Alpha" => "\u0391",
+"Beta" => "\u0392",
+"Gamma" => "\u0393",
+"Delta" => "\u0394",
+"Epsilon" => "\u0395",
+"Zeta" => "\u0396",
+"Eta" => "\u0397",
+"Theta" => "\u0398",
+"Iota" => "\u0399",
+"Kappa" => "\u039A",
+"Lambda" => "\u039B",
+"Mu" => "\u039C",
+"Nu" => "\u039D",
+"Xi" => "\u039E",
+"Omicron" => "\u039F",
+"Pi" => "\u03A0",
+"Rho" => "\u03A1",
+"Sigma" => "\u03A3",
+"Tau" => "\u03A4",
+"Upsilon" => "\u03A5",
+"Phi" => "\u03A6",
+"Chi" => "\u03A7",
+"Psi" => "\u03A8",
+"Omega" => "\u03A9",
+"oxy" => "\u1FFD",
+"bary" => "\u1FEF",
+"peri" => "\u1FC0",
+"lenis" => "\u1FBF",
+"asper" => "\u1FFE",
+"diaer" => "\u00A8",
+"lenis_oxy" => "\u1FCE",
+"lenis_bary" => "\u1FCD",
+"lenis_peri" => "\u1FCF",
+"asper_oxy" => "\u1FDE",
+"asper_bary" => "\u1FDD",
+"asper_peri" => "\u1FDF",
+"diaer_oxy" => "\u1FEE",
+"diaer_bary" => "\u1FED",
+"diaer_peri" => "\u1FC1",
+"isub" => "\u1FBE",
+"sigmaMedial" => "\u03C3",
+"sigmaMedialFixed" => "\u03C3",
+"sigmaFinal" => "\u03C2",
+"sigmaLunate" => "\u03F2",
+"SigmaLunate" => "\u03F2",
+"rho_asper" => "\u1FE5",
+"Rho_asper" => "\u1FEC",
+"rho_lenis" => "\u1FE4",
+"digamma" => "\u03DD",
+"Digamma" => "\u03DC",
+"koppa" => "\u03DF",
+"Koppa" => "\u03DE",
+"sampi" => "\u03E1",
+"Sampi" => "\u03E0",
+"alpha_oxy" => "\u1F71",
+"alpha_bary" => "\u1F70",
+"alpha_peri" => "\u1FB6",
+"alpha_lenis" => "\u1F00",
+"alpha_asper" => "\u1F01",
+"alpha_lenis_oxy" => "\u1F04",
+"alpha_asper_oxy" => "\u1F05",
+"alpha_lenis_bary" => "\u1F02",
+"alpha_asper_bary" => "\u1F03",
+"alpha_lenis_peri" => "\u1F06",
+"alpha_asper_peri" => "\u1F07",
+"Alpha_oxy" => "\u1FBB",
+"Alpha_bary" => "\u1FBA",
+"Alpha_lenis" => "\u1F08",
+"Alpha_asper" => "\u1F09",
+"Alpha_lenis_oxy" => "\u1F0C",
+"Alpha_asper_oxy" => "\u1F0D",
+"Alpha_lenis_bary" => "\u1F0A",
+"Alpha_asper_bary" => "\u1F0B",
+"Alpha_lenis_peri" => "\u1F0E",
+"Alpha_asper_peri" => "\u1F0F",
+"alpha_isub" => "\u1FB3",
+"alpha_oxy_isub" => "\u1FB4",
+"alpha_bary_isub" => "\u1FB2",
+"alpha_peri_isub" => "\u1FB7",
+"alpha_lenis_isub" => "\u1F80",
+"alpha_asper_isub" => "\u1F81",
+"alpha_lenis_oxy_isub" => "\u1F81",
+"alpha_asper_oxy_isub" => "\u1F84",
+"alpha_lenis_bary_isub" => "\u1F82",
+"alpha_asper_bary_isub" => "\u1F83",
+"alpha_lenis_peri_isub" => "\u1F86",
+"alpha_asper_peri_isub" => "\u1F87",
+"Alpha_isub" => "\u1FBC",
+"Alpha_lenis_isub" => "\u1F88",
+"Alpha_asper_isub" => "\u1F89",
+"Alpha_lenis_oxy_isub" => "\u1F8C",
+"Alpha_asper_oxy_isub" => "\u1F8D",
+"Alpha_lenis_bary_isub" => "\u1F8A",
+"Alpha_asper_bary_isub" => "\u1F8B",
+"Alpha_lenis_peri_isub" => "\u1F8E",
+"Alpha_asper_peri_isub" => "\u1F8F",
+"epsilon_oxy" => "\u1F73",
+"epsilon_bary" => "\u1F72",
+"epsilon_lenis" => "\u1F10",
+"epsilon_asper" => "\u1F11",
+"epsilon_lenis_oxy" => "\u1F14",
+"epsilon_asper_oxy" => "\u1F15",
+"epsilon_lenis_bary" => "\u1F12",
+"epsilon_asper_bary" => "\u1F13",
+"Epsilon_oxy" => "\u1FC9",
+"Epsilon_bary" => "\u1FC8",
+"Epsilon_lenis" => "\u1F18",
+"Epsilon_asper" => "\u1F19",
+"Epsilon_lenis_oxy" => "\u1F1C",
+"Epsilon_asper_oxy" => "\u1F1D",
+"Epsilon_lenis_bary" => "\u1F1A",
+"Epsilon_asper_bary" => "\u1F1B",
+"eta_oxy" => "\u1F75",
+"eta_bary" => "\u1F74",
+"eta_peri" => "\u1FC6",
+"eta_lenis" => "\u1F20",
+"eta_asper" => "\u1F21",
+"eta_lenis_oxy" => "\u1F24",
+"eta_asper_oxy" => "\u1F25",
+"eta_lenis_bary" => "\u1F22",
+"eta_asper_bary" => "\u1F23",
+"eta_lenis_peri" => "\u1F26",
+"eta_asper_peri" => "\u1F27",
+"Eta_oxy" => "\u1FCB",
+"Eta_bary" => "\u1FCA",
+"Eta_lenis" => "\u1F28",
+"Eta_asper" => "\u1F29",
+"Eta_lenis_oxy" => "\u1F2C",
+"Eta_asper_oxy" => "\u1F2D",
+"Eta_lenis_bary" => "\u1F2A",
+"Eta_asper_bary" => "\u1F2B",
+"Eta_lenis_peri" => "\u1F2E",
+"Eta_asper_peri" => "\u1F2F",
+"eta_isub" => "\u1FC3",
+"eta_oxy_isub" => "\u1FC4",
+"eta_bary_isub" => "\u1FC2",
+"eta_peri_isub" => "\u1FC7",
+"eta_lenis_isub" => "\u1F90",
+"eta_asper_isub" => "\u1F91",
+"eta_lenis_oxy_isub" => "\u1F94",
+"eta_asper_oxy_isub" => "\u1F95",
+"eta_lenis_bary_isub" => "\u1F92",
+"eta_asper_bary_isub" => "\u1F93",
+"eta_lenis_peri_isub" => "\u1F96",
+"eta_asper_peri_isub" => "\u1F97",
+"Eta_isub" => "\u1FCC",
+"Eta_lenis_isub" => "\u1F98",
+"Eta_asper_isub" => "\u1F99",
+"Eta_lenis_oxy_isub" => "\u1F9C",
+"Eta_asper_oxy_isub" => "\u1F9D",
+"Eta_lenis_bary_isub" => "\u1F9A",
+"Eta_asper_bary_isub" => "\u1F9B",
+"Eta_lenis_peri_isub" => "\u1F9E",
+"Eta_asper_peri_isub" => "\u1F9F",
+"iota_oxy" => "\u1F77",
+"iota_bary" => "\u1F76",
+"iota_peri" => "\u1FD6",
+"iota_lenis" => "\u1F30",
+"iota_asper" => "\u1F31",
+"iota_lenis_oxy" => "\u1F34",
+"iota_asper_oxy" => "\u1F35",
+"iota_lenis_bary" => "\u1F32",
+"iota_asper_bary" => "\u1F33",
+"iota_lenis_peri" => "\u1F36",
+"iota_asper_peri" => "\u1F37",
+"iota_diaer" => "\u03CA",
+"iota_diaer_oxy" => "\u1FD3",
+"iota_diaer_bary" => "\u1FD2",
+"iota_diaer_peri" => "\u1FD7",
+"Iota_oxy" => "\u1FDB",
+"Iota_bary" => "\u1FDA",
+"Iota_lenis" => "\u1F38",
+"Iota_asper" => "\u1F39",
+"Iota_lenis_oxy" => "\u1F3C",
+"Iota_asper_oxy" => "\u1F3D",
+"Iota_lenis_bary" => "\u1F3A",
+"Iota_asper_bary" => "\u1F3B",
+"Iota_lenis_peri" => "\u1F3E",
+"Iota_asper_peri" => "\u1F3F",
+"Iota_diaer" => "\u03AA",
+"omicron_oxy" => "\u1F79",
+"omicron_bary" => "\u1F78",
+"omicron_lenis" => "\u1F40",
+"omicron_asper" => "\u1F41",
+"omicron_lenis_oxy" => "\u1F44",
+"omicron_asper_oxy" => "\u1F45",
+"omicron_lenis_bary" => "\u1F42",
+"omicron_asper_bary" => "\u1F43",
+"Omicron_oxy" => "\u1FF9",
+"Omicron_bary" => "\u1FF8",
+"Omicron_lenis" => "\u1F48",
+"Omicron_asper" => "\u1F49",
+"Omicron_lenis_oxy" => "\u1F4C",
+"Omicron_asper_oxy" => "\u1F4D",
+"Omicron_lenis_bary" => "\u1F4A",
+"Omicron_asper_bary" => "\u1F4B",
+"upsilon_oxy" => "\u1F7B",
+"upsilon_bary" => "\u1F7A",
+"upsilon_peri" => "\u1FE6",
+"upsilon_lenis" => "\u1F50",
+"upsilon_asper" => "\u1F51",
+"upsilon_lenis_oxy" => "\u1F54",
+"upsilon_asper_oxy" => "\u1F55",
+"upsilon_lenis_bary" => "\u1F52",
+"upsilon_asper_bary" => "\u1F53",
+"upsilon_lenis_peri" => "\u1F56",
+"upsilon_asper_peri" => "\u1F57",
+"upsilon_diaer" => "\u03CB",
+"upsilon_diaer_oxy" => "\u1FE3",
+"upsilon_diaer_bary" => "\u1FE2",
+"upsilon_diaer_peri" => "\u1FE7",
+"Upsilon_oxy" => "\u1FEB",
+"Upsilon_bary" => "\u1FEA",
+"Upsilon_asper" => "\u1F59",
+"Upsilon_asper_oxy" => "\u1F5D",
+"Upsilon_asper_bary" => "\u1F5B",
+"Upsilon_asper_peri" => "\u1F5F",
+"Upsilon_diaer" => "\u03AB",
+"omega_oxy" => "\u1F7D",
+"omega_bary" => "\u1F7C",
+"omega_peri" => "\u1FF6",
+"omega_lenis" => "\u1F60",
+"omega_asper" => "\u1F61",
+"omega_lenis_oxy" => "\u1F64",
+"omega_asper_oxy" => "\u1F65",
+"omega_lenis_bary" => "\u1F62",
+"omega_asper_bary" => "\u1F63",
+"omega_lenis_peri" => "\u1F66",
+"omega_asper_peri" => "\u1F67",
+"Omega_oxy" => "\u1FFB",
+"Omega_bary" => "\u1FFA",
+"Omega_lenis" => "\u1F68",
+"Omega_asper" => "\u1F69",
+"Omega_lenis_oxy" => "\u1F6C",
+"Omega_asper_oxy" => "\u1F6D",
+"Omega_lenis_bary" => "\u1F6A",
+"Omega_asper_bary" => "\u1F6B",
+"Omega_lenis_peri" => "\u1F6E",
+"Omega_asper_peri" => "\u1F6F",
+"omega_isub" => "\u1FF3",
+"omega_oxy_isub" => "\u1FF4",
+"omega_bary_isub" => "\u1FF2",
+"omega_peri_isub" => "\u1FF7",
+"omega_lenis_isub" => "\u1FA0",
+"omega_asper_isub" => "\u1FA1",
+"omega_lenis_oxy_isub" => "\u1FA4",
+"omega_asper_oxy_isub" => "\u1FA5",
+"omega_lenis_bary_isub" => "\u1FA2",
+"omega_asper_bary_isub" => "\u1FA3",
+"omega_lenis_peri_isub" => "\u1FA6",
+"omega_asper_peri_isub" => "\u1FA7",
+"Omega_isub" => "\u1FFC",
+"Omega_lenis_isub" => "\u1FA8",
+"Omega_asper_isub" => "\u1FA9",
+"Omega_lenis_oxy_isub" => "\u1FAC",
+"Omega_asper_oxy_isub" => "\u1FAD",
+"Omega_lenis_bary_isub" => "\u1FAA",
+"Omega_asper_bary_isub" => "\u1FAB",
+"Omega_lenis_peri_isub" => "\u1FAE",
+"Omega_asper_peri_isub" => "\u1FAF",
+"prime" => "\u0374",
+"raisedDot"  => "\u0387",
+"semicolon" => "\u037E",
+"elisionMark" => "\u1FBD",
+"sigmaFinalFixed" => "\u03C2",
+
+"openingSquareBracket" => "\u005B",
+"closingSquareBracket" => "\u005D",
+"openingParentheses" => "\u0028",
+"closingParentheses" => "\u0029",
+"openingAngleBracket" => "\u2329",
+"closingAngleBracket" => "\u232A",
+"openingCurlyBracket" => "\u007B",
+"closingCurlyBracket" => "\u007C",
+"openingDoubleSquareBracket" => "\u27E6",
+"closingDoubleSquareBracket" => "\u27E7",
+"crux" => "\u2020",
+"asterisk" => "\u002A",
+"longVerticalBar" => "\u007C",
+"stigma" => "\u03DB",
+"Stigma" => "\u03DA"
+]
+  
+  end#EOC
+end#EOM
