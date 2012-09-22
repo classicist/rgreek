@@ -46,4 +46,25 @@ describe "rGreek" do
     parse = Parse.find_parses("po/lis")[1]
     parse.morph_code.should == "n-p---fa-" # "noun pl fem acc" <- epic, doric, etc.
   end
+  
+  it "should sort parses by lemma id" do
+    parses = Parse.find_parses("le/gw")
+    last_lemma_id = 0
+    parses.each do |parse|
+      parse.lemma_id.should >= last_lemma_id
+      last_lemma_id = parse.lemma_id
+    end
+  end
+  
+  it "should return parses in a hosh of lemmas" do
+    parses = Parse.find_parses_hashed_by_lemma("le/gw")
+    parses.length.should == 3
+  end
+  
+  it "should create a parse report for a word form" do
+    reports = ParseReport.generate("kai/")
+    reports.first.lemma.should == Lemma.find_by_headword("kai/")
+    reports.first.parses.should == Parse.find_parses("kai/")
+    reports.first.to_s.should  == "kai/: and, conj indeclinable"
+  end
 end
