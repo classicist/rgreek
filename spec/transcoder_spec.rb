@@ -2,7 +2,7 @@
 
 require File.dirname(__FILE__) + '/spec_helper'
 
-describe Transcoder do
+describe "The Betacode Tokenizer" do
   it "should give the name of a betacode token for the regular alphabet" do
     Transcoder.tokenize("a").should == ["alpha"]
     Transcoder.tokenize("w").should == ["omega"]    
@@ -46,8 +46,11 @@ describe Transcoder do
   it "should give the name of a betacode token for critical marks" do
     Transcoder.tokenize("%%2%5").should == ["crux", "asterisk", "longVerticalBar"]
   end
-#  it "should convert betacode to unicode with combineding greek accents" do
-#    pending
-#    #Transcoder.convert("kai/").should == "καί"
-#  end
+end
+
+describe "Betacode to Unicode C Conversion" do
+  
+  it "should convert betacode letters to unicode without greek accents" do
+    Transcoder.convert("kai/").should == "και"
+  end
 end
