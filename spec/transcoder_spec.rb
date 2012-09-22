@@ -51,6 +51,11 @@ end
 describe "Betacode to Unicode C Conversion" do
   
   it "should convert betacode letters to unicode without greek accents" do
-    Transcoder.convert("kai/").should == "και"
+    Transcoder.convert("kai").should == "και"
+  end
+  
+  it "should convert betacode letters to unicode with combined greek accents over vowels" do
+    Transcoder.convert("le/gw").should == "λέγω"
+    Transcoder.convert("kai/").should == "καί"
   end
 end

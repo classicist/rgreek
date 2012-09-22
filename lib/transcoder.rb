@@ -4,7 +4,42 @@ module RGreek
   class Transcoder
   #  UNFCC = File.read("#{__FILE__}/..data/UnicodeCConverter.properties")
   LETTER = /[a-zA-Z]/
-  
+    def self.convert(betacode)
+      current_index = 0
+      betacode = tokenize(betacode)
+      unicode = ""
+      while current_index < betacode.length
+        code = betacode[current_index]
+        combined_characters = combine_characters(code, current_index, betacode)
+        current_index = index_adjusted_for_combined_characters(combined_characters[:last_index], current_index)
+        unicode << lookup_unicode(combined_characters[:code])
+      end 
+      unicode
+    end
+    
+    def self.combine_characters(code, index, codes)
+      next_index = index + 1
+      next_index_in_bounds = codes.length - 1 >= next_index
+      return {code: code, last_index: index} unless next_index_in_bounds
+      
+      next_code        = codes[next_index]
+      combined_code    = code + "_" + next_code
+      it_combines = lookup_unicode(combined_code) != nil
+      
+      if it_combines
+        return combine_characters(combined_code, next_index, codes)
+      else 
+        return {code: code, last_index: index}
+      end
+    end
+    
+    def self.index_adjusted_for_combined_characters(last_index, current_index)
+        iterations = last_index - current_index
+        current_index += iterations if iterations > 0
+        current_index += 1
+        current_index      
+    end
+    
     def self.tokenize(betacode)      
       current_index = 0
       betacode.split("").map do |current_char|
@@ -46,6 +81,10 @@ module RGreek
   
     def self.lookup(code)
       BETA_CODES[code.upcase]
+    end
+    
+    def self.lookup_unicode(code)
+      UNICODES[code] #don't skrew with the case, the hash is case sensitive
     end
     
     def self.match?(char, pattern)
@@ -156,6 +195,9 @@ BETA_CODES = Hash[
 "]4" => "closingDoubleSquareBracket"
 ]
 
+GREEK_VOWELS  = ["alpha", "Alpha", "epsilon", "Epsilon", "eta", "Eta", "iota", "Iota", "omicron", "Omicron", "upsilon", "Upsilon", "omega", "Omega"]
+GREEK_ACCENTS = ["oxy" ,"bary" ,"peri" ,"lenis","asper","diaer", "isub"]
+
 UNICODES = Hash[
 "alpha" => "\u03B1",
 "beta" => "\u03B2",
@@ -204,12 +246,24 @@ UNICODES = Hash[
 "Chi" => "\u03A7",
 "Psi" => "\u03A8",
 "Omega" => "\u03A9",
-"oxy" => "\u1FFD",
-"bary" => "\u1FEF",
-"peri" => "\u1FC0",
+"digamma" => "\u03DD",
+"Digamma" => "\u03DC",
+"koppa" => "\u03DF",
+"Koppa" => "\u03DE",
+"sampi" => "\u03E1",
+"Sampi" => "\u03E0",
+"stigma" => "\u03DB",
+"Stigma" => "\u03DA",
+"sigmaFinalFixed" => "\u03C2",
+
+"oxy"   => "\u1FFD",
+"bary"  => "\u1FEF",
+"peri"  => "\u1FC0",
 "lenis" => "\u1FBF",
 "asper" => "\u1FFE",
 "diaer" => "\u00A8",
+"isub" => "\u1FBE",
+
 "lenis_oxy" => "\u1FCE",
 "lenis_bary" => "\u1FCD",
 "lenis_peri" => "\u1FCF",
@@ -219,21 +273,17 @@ UNICODES = Hash[
 "diaer_oxy" => "\u1FEE",
 "diaer_bary" => "\u1FED",
 "diaer_peri" => "\u1FC1",
-"isub" => "\u1FBE",
+
 "sigmaMedial" => "\u03C3",
 "sigmaMedialFixed" => "\u03C3",
 "sigmaFinal" => "\u03C2",
 "sigmaLunate" => "\u03F2",
 "SigmaLunate" => "\u03F2",
+
 "rho_asper" => "\u1FE5",
 "Rho_asper" => "\u1FEC",
 "rho_lenis" => "\u1FE4",
-"digamma" => "\u03DD",
-"Digamma" => "\u03DC",
-"koppa" => "\u03DF",
-"Koppa" => "\u03DE",
-"sampi" => "\u03E1",
-"Sampi" => "\u03E0",
+
 "alpha_oxy" => "\u1F71",
 "alpha_bary" => "\u1F70",
 "alpha_peri" => "\u1FB6",
@@ -440,11 +490,11 @@ UNICODES = Hash[
 "Omega_asper_bary_isub" => "\u1FAB",
 "Omega_lenis_peri_isub" => "\u1FAE",
 "Omega_asper_peri_isub" => "\u1FAF",
+
 "prime" => "\u0374",
 "raisedDot"  => "\u0387",
 "semicolon" => "\u037E",
 "elisionMark" => "\u1FBD",
-"sigmaFinalFixed" => "\u03C2",
 
 "openingSquareBracket" => "\u005B",
 "closingSquareBracket" => "\u005D",
@@ -459,8 +509,6 @@ UNICODES = Hash[
 "crux" => "\u2020",
 "asterisk" => "\u002A",
 "longVerticalBar" => "\u007C",
-"stigma" => "\u03DB",
-"Stigma" => "\u03DA"
 ]
   
   end#EOC
