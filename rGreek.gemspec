@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = RGreek::VERSION
   gem.authors       = ["Paul Saieg"]
   gem.email         = ["classicist@gmail.com"]
-  gem.description   = %q{Ruby tools for working with classical Greek}
-  gem.summary       = %q{Ruby tools for working with classical Greek}
+  gem.description   = %q{Light, intuituive ruby tools for working with classical Greek}
+  gem.summary       = %q{Light, intuituive ruby tools for working with classical Greek}
   gem.homepage      = "https://github/psaieg/rGreek"
 
   gem.files         = `git ls-files`.split($/)
@@ -20,4 +20,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rspec"
   gem.add_development_dependency "sqlite3"  
   gem.add_development_dependency "activerecord"  
+  gem.add_development_dependency "sinatra"    
 end

@@ -6,7 +6,11 @@ require "transcoder"
 module RGreek
   ActiveRecord::Base.establish_connection adapter: "sqlite3", database: "db/rgreek.db"
 
-  class Lemma < ActiveRecord::Base;end
+  class Lemma < ActiveRecord::Base
+    def to_greek
+      Transcoder.convert(headword)
+    end
+  end
   
   class Parse < ActiveRecord::Base       
     def self.find_parses(word)
