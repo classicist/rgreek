@@ -59,7 +59,7 @@ module RGreek
     end
     
     def to_s
-      "#{lemma.headword}: #{lemma.short_def}" + parses.map { |parse| ", #{parse.morph_code_pretty}" }.join("\n").chomp
+      "#{lemma.headword}: #{lemma.short_def}, " + parses.map { |parse| "#{parse.morph_code_pretty}" }.join("\n")
     end
   end
 end
