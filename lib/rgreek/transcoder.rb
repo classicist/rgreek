@@ -20,7 +20,7 @@ module RGreek
 private
     
     def self.selectively_clean_betacode(betacode) 
-      betacode.gsub("S2", "s")  #return "s" for final sigma code bc we prefer to tell final sigma by position to by unique S2 code
+      betacode.gsub("s2", "s")  #return "s" for final sigma code bc we prefer to tell final sigma by position to by unique S2 code
     end
     
     def self.convert_to_unicode(betacode_tokens)
@@ -66,11 +66,11 @@ private
         last_char           = current_index     > 0               ? betacode[current_index - 1] : ""
         next_char           = current_index     < betacode.length ? betacode[current_index + 1] : ""
 
-        is_final_sigma      = match?(current_char, /s/)    && (next_char == nil || match?(next_char, /\W/))                            
-        is_letter           = match?(current_char, LETTER) && !isBetaCodePrefix(last_char) && !match?(next_char, /\d/) && !is_final_sigma
         is_capital          = match?(current_char, LETTER) && match?(last_char, /\*/) && !match?(next_char, /\d/)
+        is_final_sigma      = match?(current_char, /[sS]/)    && (next_char == nil || match?(next_char, /\W/)) && !is_capital                            
+        is_letter           = match?(current_char, LETTER) && !isBetaCodePrefix(last_char) && !match?(next_char, /\d/) && !is_final_sigma
         is_diacrital        = isBetaCodeDiacritical(current_char)
-        is_crazy_sigma      = match?(current_char, /\d/) && match?(last_char, /S/) 
+        is_crazy_sigma      = match?(current_char, /\d/) && match?(last_char, /[sS]/) 
         is_kop_or_samp      = match?(current_char, /\d/) && match?(last_char, /#/) 
         is_punctuation      = match?(current_char, /[#\:;',\.]/) && !match?(next_char, /\d/)
         is_a_bracket        = match?(current_char, /\[|\]/)
@@ -82,7 +82,7 @@ private
         if is_letter || is_punctuation || is_diacrital || is_a_crux          
            lookup_betacode(current_char)
          elsif is_final_sigma
-           lookup_betacode("S2")
+           lookup_betacode("s2")
         elsif is_capital || is_a_critical_mark
            lookup_betacode(last_char + current_char)
         elsif is_crazy_sigma || is_kop_or_samp
@@ -98,7 +98,7 @@ private
     end
     
     def self.lookup_betacode(code)
-      code = BETA_CODES[code.upcase] 
+      code = BETA_CODES[code.downcase] 
       raise "#{code} is not a recognized betacode" unless code
       code
     end
@@ -120,58 +120,58 @@ private
     end
   
 BETA_CODES = Hash[
-"A" => "alpha",
-"B" => "beta",
-"G" => "gamma",
-"D" => "delta",
-"E" => "epsilon",
-"Z" => "zeta",
-"H" => "eta",
-"Q" => "theta",
-"I" => "iota",
-"K" => "kappa",
-"L" => "lambda",
-"M" => "mu",
-"N" => "nu",
-"C" => "xi",
-"O" => "omicron",
-"P" => "pi",
-"R" => "rho",
-"S" => "sigmaMedial",
-"T" => "tau",
-"U" => "upsilon",
-"F" => "phi",
-"X" => "chi",
-"Y" => "psi",
-"W" => "omega",
-"V" => "digamma",
-
-"*A" => "Alpha", #captials
-"*B" => "Beta",
-"*G" => "Gamma",
-"*D" => "Delta",
-"*E" => "Epsilon",
-"*Z" => "Zeta",
-"*H" => "Eta",
-"*Q" => "Theta",
-"*I" => "Iota",
-"*K" => "Kappa",
-"*L" => "Lambda",
-"*M" => "Mu",
-"*N" => "Nu",
-"*C" => "Xi",
-"*O" => "Omicron",
-"*P" => "Pi",
-"*R" => "Rho",
-"*S" => "Sigma",
-"*T" => "Tau",
-"*U" => "Upsilon",
-"*F" => "Phi",
-"*X" => "Chi",
-"*Y" => "Psi",
-"*W" => "Omega",
-"*V" => "Digamma",
-
+"a" => "alpha",
+"b" => "beta",
+"g" => "gamma",
+"d" => "delta",
+"e" => "epsilon",
+"z" => "zeta",
+"h" => "eta",
+"q" => "theta",
+"i" => "iota",
+"k" => "kappa",
+"l" => "lambda",
+"m" => "mu",
+"n" => "nu",
+"c" => "xi",
+"o" => "omicron",
+"p" => "pi",
+"r" => "rho",
+"s" => "sigmaMedial",
+"t" => "tau",
+"u" => "upsilon",
+"f" => "phi",
+"x" => "chi",
+"y" => "psi",
+"w" => "omega",
+"v" => "digamma",
+ 
+"*a" => "Alpha", #captials
+"*b" => "Beta",
+"*g" => "Gamma",
+"*d" => "Delta",
+"*e" => "Epsilon",
+"*z" => "Zeta",
+"*h" => "Eta",
+"*q" => "Theta",
+"*i" => "Iota",
+"*k" => "Kappa",
+"*l" => "Lambda",
+"*m" => "Mu",
+"*n" => "Nu",
+"*c" => "Xi",
+"*o" => "Omicron",
+"*p" => "Pi",
+"*r" => "Rho",
+"*s" => "Sigma",
+"*t" => "Tau",
+"*u" => "Upsilon",
+"*f" => "Phi",
+"*x" => "Chi",
+"*y" => "Psi",
+"*w" => "Omega",
+"*v" => "Digamma",
+ 
 "/" => "oxy",   #lone acute
 "\\" => "bary", #lone grave 
 "\=" => "peri", #lone circumflex
@@ -179,30 +179,30 @@ BETA_CODES = Hash[
 "(" => "asper", #lone rough breathing
 "+" => "diaer", #lone diaeresis
 "|" => "isub",
-
+ 
 " " => "space",
 "%" => "crux",
 "%2" => "asterisk",
 "%5" => "longVerticalBar",
-
-"S2" => "sigmaFinal",
-"S3" => "sigmaLunate",
-"*S3" => "SigmaLunate",
-
+ 
+"s2" => "sigmaFinal",
+"s3" => "sigmaLunate",
+"*s3" => "SigmaLunate",
+ 
 "#2" => "stigma",
 "*#2" => "Stigma",
 "#3" => "koppa",
 "*#3" => "Koppa",
 "#5" => "sampi",
 "*#5" => "Sampi",
-
+ 
 "#" => "prime",
 "\:" => "raisedDot",
 ";" => "semicolon",
 "'" => "elisionMark",
 "," => "comma",
 "." => "period",
-
+ 
 "[" => "openingSquareBracket",
 "]" => "closingSquareBracket",
 "[1" => "openingParentheses",
