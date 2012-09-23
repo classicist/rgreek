@@ -3,26 +3,30 @@
 module RGreek
   class Transcoder
     def self.betacode_to_unicode(betacode)
-      current_index = 0
-      betacode = tokenize(betacode)
-      unicode = ""
-      while current_index < betacode.length
-        code = betacode[current_index]
-        combined_characters = combine_characters(code, current_index, betacode)
-        current_index = index_adjusted_for_combined_characters(combined_characters[:last_index], current_index)
-        unicode << lookup_unicode(combined_characters[:code])
-      end 
-      unicode
+      betacode_tokens = tokenize(betacode)
+      convert_to_unicode(betacode_tokens)
     end
     
     def self.unicode_to_betacode(unicode)
       unicode.split("").map do |unichar|
         beta_token = REVERSE_UNICODES[unichar]
-        beta_token.split("_").map { |token| REVERSE_BETA_CODES[token] }.join
+        beta_token.split("_").map { |token| REVERSE_BETA_CODES[token] }
       end.join.downcase
     end
 
-private    
+private
+    def self.convert_to_unicode(betacode_tokens)
+      current_index = 0
+      unicode = ""
+      while current_index < betacode_tokens.length #while loop is necessary to do index adjustmnet for making precombined accents
+        code = betacode_tokens[current_index]
+        combined_characters = combine_characters(code, current_index, betacode_tokens)
+        current_index = index_adjusted_for_combined_characters(combined_characters[:last_index], current_index)
+        unicode << lookup_unicode(combined_characters[:code])
+      end 
+      unicode
+    end
+        
     def self.combine_characters(code, index, codes)
       next_index = index + 1
       next_index_in_bounds = codes.length - 1 >= next_index
@@ -81,9 +85,11 @@ private
         end
       end.compact
     end
-  
+    
     def self.lookup_betacode(code)
-      BETA_CODES[code.upcase]
+      code = BETA_CODES[code.upcase] 
+      raise "#{code} is not a recognized betacode" unless code
+      code
     end
     
     def self.lookup_unicode(code)
@@ -277,7 +283,7 @@ UNICODES = Hash[
 "sigmaMedial" => "\u03C3",
 "sigmaFinal" => "\u03C2",
 "sigmaLunate" => "\u03F2",
-"SigmaLunate" => "\u03F2",
+"SigmaLunate" => "\u03F9",
 #"sigmaFinalFixed" => "\u03C2",
 #"sigmaMedialFixed" => "\u03C3",
 
@@ -312,8 +318,8 @@ UNICODES = Hash[
 "alpha_peri_isub" => "\u1FB7",
 "alpha_lenis_isub" => "\u1F80",
 "alpha_asper_isub" => "\u1F81",
-"alpha_lenis_oxy_isub" => "\u1F81",
-"alpha_asper_oxy_isub" => "\u1F84",
+"alpha_lenis_oxy_isub" => "\u1F84",
+"alpha_asper_oxy_isub" => "\u1F85",
 "alpha_lenis_bary_isub" => "\u1F82",
 "alpha_asper_bary_isub" => "\u1F83",
 "alpha_lenis_peri_isub" => "\u1F86",
@@ -505,13 +511,15 @@ UNICODES = Hash[
 "openingAngleBracket" => "\u2329",
 "closingAngleBracket" => "\u232A",
 "openingCurlyBracket" => "\u007B",
-"closingCurlyBracket" => "\u007C",
+"closingCurlyBracket" => "\u007D",
 "openingDoubleSquareBracket" => "\u27E6",
 "closingDoubleSquareBracket" => "\u27E7",
 "crux" => "\u2020",
 "asterisk" => "\u002A",
 "longVerticalBar" => "\u007C",
 ]
+
+#{}"sigmaFinal", "sigmaLunate"
 
 REVERSE_BETA_CODES ||= BETA_CODES.invert
 REVERSE_UNICODES   ||= UNICODES.invert

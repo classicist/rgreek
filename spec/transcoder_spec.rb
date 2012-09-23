@@ -67,4 +67,27 @@ describe "Betacode to Unicode C Conversion" do
     Transcoder.unicode_to_betacode("γνῶθι | σεαύτον†").should == "gnw=qi %5 seau/ton%"
   end
   
+  it "should change all known betacode tokens to unicode" do    
+      unicodes = Transcoder.convert_to_unicode(Transcoder::BETA_CODES.values)
+      unicodes.length.should > 0
+      unicodes.split("").each do |code|
+        Transcoder::REVERSE_UNICODES[code].should_not == nil        
+      end
+  end
+
+  it "should reverse the betacode and unicode transcoding hashes without loss" do
+      Transcoder::BETA_CODES.keys.should == Transcoder::REVERSE_BETA_CODES.values
+      Transcoder::UNICODES.keys.should == Transcoder::REVERSE_UNICODES.values
+      Transcoder::BETA_CODES.values.should == Transcoder::REVERSE_BETA_CODES.keys
+      Transcoder::UNICODES.values.should == Transcoder::REVERSE_UNICODES.keys
+  end
+
+  it "should change all known unicode chars to betacode and back without loss" do    
+    pending
+      all_known_unicode_chars = Transcoder::UNICODES.values.join      
+      betacodes = Transcoder.unicode_to_betacode(all_known_unicode_chars)
+      result_unicode = Transcoder.betacode_to_unicode(betacodes)
+      (all_known_unicode_chars.split("") - result_unicode.split("")).should == "mo"
+  end
+
 end
