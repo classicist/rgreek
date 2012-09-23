@@ -82,7 +82,7 @@ private
         if is_letter || is_punctuation || is_diacrital || is_a_crux          
            lookup_betacode(current_char)
          elsif is_final_sigma
-           lookup_betacode("s2")
+           lookup_betacode("s2") #looked up by position or value
         elsif is_capital || is_a_critical_mark
            lookup_betacode(last_char + current_char)
         elsif is_crazy_sigma || is_kop_or_samp
@@ -294,8 +294,6 @@ UNICODES = Hash[
 "sigmaFinal" => "\u03C2",
 "sigmaLunate" => "\u03F2",
 "SigmaLunate" => "\u03F9",
-#"sigmaFinalFixed" => "\u03C2",
-#"sigmaMedialFixed" => "\u03C3",
 
 "rho_asper" => "\u1FE5",
 "Rho_asper" => "\u1FEC",
@@ -530,8 +528,6 @@ UNICODES = Hash[
 "asterisk" => "\u002A",
 "longVerticalBar" => "\u007C",
 ]
-
-#{}"sigmaFinal", "sigmaLunate"
 
 REVERSE_BETA_CODES ||= BETA_CODES.invert
 REVERSE_UNICODES   ||= UNICODES.invert

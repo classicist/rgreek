@@ -106,16 +106,16 @@ describe "Betacode to Unicode C Conversion" do
       result_unicode = Transcoder.betacode_to_unicode(betacodes)
       (all_known_unicode_chars.split("") - result_unicode.split("")).map do |unicode|
         Transcoder.name_of_unicode_char(unicode)
-      end.should == ["sigmaFinal"] #sigmaFinal should be missing here for the reciprocal reason as given above        
+      end.should == ["sigmaFinal"] #sigmaFinal should be missing bc we never print "s2" (reciprocal with above)       
   end
   
   it "should transcode sigma and final sigma correctly based on position or value" do
-      Transcoder.unicode_to_betacode("ς").should_not == "s2"
+      Transcoder.unicode_to_betacode("ς").should_not == "s2" #never output s2
       Transcoder.unicode_to_betacode("ς").should == "s" 
       Transcoder.unicode_to_betacode("σα").should == "sa"     
-      
+
+      Transcoder.betacode_to_unicode("s2").should == "ς"      
       Transcoder.betacode_to_unicode("s").should == "ς"       
-      Transcoder.betacode_to_unicode("s2").should == "ς"       
       Transcoder.betacode_to_unicode("sa").should == "σα"     
   end
 end
