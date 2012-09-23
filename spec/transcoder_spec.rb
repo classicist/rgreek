@@ -123,8 +123,20 @@ describe "Betacode to Unicode C Conversion" do
     beta, uni = "kai/", "καί"
     Transcoder.is_betacode?(beta).should == true
     Transcoder.is_betacode?(uni).should == false
-          
-    Transcoder.is_unicode?(uni).should == true    
-    Transcoder.is_unicode?(beta).should == false      
+
+    Transcoder.is_unicode?(uni).should == true
+    Transcoder.is_unicode?(beta).should == false
+    
+    Transcoder.is_betacode?(Transcoder::BETA_CODES.keys.join).should == true
+    Transcoder.is_betacode?(Transcoder::UNICODES.values.join).should == false
+    
+    Transcoder.is_unicode?(Transcoder::UNICODES.values.join).should == true     
+    Transcoder.is_unicode?(Transcoder::BETA_CODES.keys.join).should == false      
+  end
+  
+  it "should should automatically transcode beta and unicode" do
+    beta, uni = "kai/", "καί"
+    Transcoder.convert(beta).should == uni
+    Transcoder.convert(uni).should == beta            
   end
 end

@@ -2,6 +2,17 @@
 
 module RGreek
   class Transcoder
+    
+    def self.convert(code)
+      if is_betacode?(code)
+        betacode_to_unicode(code)
+      elsif is_unicode?(code)
+        unicode_to_betacode(code)
+      else
+        raise "#{code} is neither valid unicode nor betacode -- let's try to keep it clean fellahs"
+      end
+    end
+    
     def self.betacode_to_unicode(betacode)
       betacode_tokens = tokenize(betacode)
       convert_to_unicode(betacode_tokens)
@@ -98,11 +109,12 @@ private
     end
     
     def self.is_betacode?(code)
-      !tokenize(code).empty?
+      tokens = tokenize(code)
+      !(tokens - SHARED_TOKENS).empty?
     end
     
     def self.is_unicode?(code)
-      !code.split("").detect{ |char| REVERSE_UNICODES[char] }.nil?
+      code.split("").detect{ |char| !UNICODES.values.include?(char) }.nil?
     end
     
     def self.lookup_betacode(code)
@@ -184,7 +196,7 @@ BETA_CODES = Hash[
 ")" => "lenis", #lone smooth breathing 
 "(" => "asper", #lone rough breathing
 "+" => "diaer", #lone diaeresis
-"|" => "isub",
+"|" => "isub",  #pipe for iota subscript
  
 " " => "space",
 "%" => "crux",
@@ -537,5 +549,7 @@ UNICODES = Hash[
 
 REVERSE_BETA_CODES ||= BETA_CODES.invert
 REVERSE_UNICODES   ||= UNICODES.invert
+SHARED_TOKENS = (UNICODES.values & BETA_CODES.keys).map { |v|  BETA_CODES[v] }
+
   end#EOC
 end#EOM
