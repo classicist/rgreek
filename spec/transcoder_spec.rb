@@ -118,4 +118,13 @@ describe "Betacode to Unicode C Conversion" do
       Transcoder.betacode_to_unicode("s").should == "ς"       
       Transcoder.betacode_to_unicode("sa").should == "σα"     
   end
+  
+  it "should detect whether the input is beta or unicode" do
+    beta, uni = "kai/", "καί"
+    Transcoder.is_betacode?(beta).should == true
+    Transcoder.is_betacode?(uni).should == false
+          
+    Transcoder.is_unicode?(uni).should == true    
+    Transcoder.is_unicode?(beta).should == false      
+  end
 end

@@ -97,10 +97,16 @@ private
       end.compact
     end
     
+    def self.is_betacode?(code)
+      !tokenize(code).empty?
+    end
+    
+    def self.is_unicode?(code)
+      !code.split("").detect{ |char| REVERSE_UNICODES[char] }.nil?
+    end
+    
     def self.lookup_betacode(code)
-      code = BETA_CODES[code.downcase] 
-      raise "#{code} is not a recognized betacode" unless code
-      code
+      BETA_CODES[code.downcase] 
     end
     
     def self.lookup_unicode(code)
