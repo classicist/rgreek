@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.push File.expand_path("../../", __FILE__)
+
+require 'rgreek'
+  include RGreek
+  
+def respond(msg)
+  if ARGV.length < 2
+    puts msg
+    exit 1
+  end
+  ARGV.shift
+  puts yield ARGV
+  exit 0
+end
+
+case ARGV[0]
+when "betacode_to_unicode"  
+    respond("please input the betacode text you would like transcoded to unicode") do |args| Transcoder.betacode_to_unicode(args.join) end
+when "unicode_to_betacode"
+    respond("please input the unicode text you would like transcoded to betacode") do |args| Transcoder.unicode_to_betacode(args.join) end
+when "parse"
+    respond("please input the greek word you would like parsed using betacode") do |args| Parse.find_parses_hashed_by_lemma(args.join) end
+else
+  puts "choose a command: betacode_to_unicode, unicode_to_betacode, or parse"
+  exit 1
+end

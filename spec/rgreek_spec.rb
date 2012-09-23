@@ -65,6 +65,6 @@ describe "rGreek" do
     reports = ParseReport.generate("kai/")
     reports.first.lemma.should == Lemma.find_by_headword("kai/")
     reports.first.parses.should == Parse.find_parses("kai/")
-    reports.first.to_s.should  == "kai/: and, conj indeclinable"
+    reports.first.to_s.should  == "καί: and, conj indeclinable"
   end
 end
