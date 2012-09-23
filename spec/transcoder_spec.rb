@@ -56,6 +56,7 @@ describe "Betacode to Unicode C Conversion" do
   end
   
   it "should convert betacode letters to unicode with combined greek accents over vowels with breathing marks, spaces, and wierd punctuation" do
+    Transcoder.betacode_to_unicode("pw=s, a.").should == "πῶς, α."  
     Transcoder.betacode_to_unicode("pw=s ").should == "πῶς "  
     Transcoder.betacode_to_unicode("pw=s").should == "πῶς"    
     Transcoder.betacode_to_unicode("[4*h)/xw]4\:").should == "⟦Ἤχω⟧·"
@@ -85,9 +86,17 @@ describe "Betacode to Unicode C Conversion" do
       Transcoder::BETA_CODES.values.should == Transcoder::REVERSE_BETA_CODES.keys
       Transcoder::UNICODES.values.should == Transcoder::REVERSE_UNICODES.keys
   end
+  
+  it "should change roundtrip betacode -> unicode -> betacode for all known betacodes" do
+    pending
+      all_known_betacode_chars = Transcoder::BETA_CODES.keys.join(",")      
+      unicodes = Transcoder.betacode_to_unicode(all_known_betacode_chars)      
+      result_betacode = Transcoder.unicode_to_betacode(unicodes)
+      (all_known_betacode_chars.split(",") - result_betacode.split(",")).sort.should == []    
+  end
 
-  it "should change all known unicode chars to betacode and back without loss" do    
-      pending
+  it "should change roundtrip unicode -> betacode -> unicode for all known betacodes" do
+    pending
       all_known_unicode_chars = Transcoder::UNICODES.values.join      
       betacodes = Transcoder.unicode_to_betacode(all_known_unicode_chars)      
       result_unicode = Transcoder.betacode_to_unicode(betacodes)

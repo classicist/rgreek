@@ -72,7 +72,7 @@ private
         is_diacrital        = isBetaCodeDiacritical(current_char)
         is_crazy_sigma      = match?(current_char, /\d/) && match?(last_char, /S/) 
         is_kop_or_samp      = match?(current_char, /\d/) && match?(last_char, /#/) 
-        is_punctuation      = match?(current_char, /[#\:;']/) && !match?(next_char, /\d/)
+        is_punctuation      = match?(current_char, /[#\:;',\.]/) && !match?(next_char, /\d/)
         is_a_bracket        = match?(current_char, /\[|\]/)
         is_a_crux           = match?(current_char, /\%/) && !match?(next_char, /\d/)
         is_a_critical_mark  = match?(current_char, /\d/) && match?(last_char, /\%/) && !match?(next_char, /\d/)        
@@ -200,6 +200,8 @@ BETA_CODES = Hash[
 "\:" => "raisedDot",
 ";" => "semicolon",
 "'" => "elisionMark",
+"," => "comma",
+"." => "period",
 
 "[" => "openingSquareBracket",
 "]" => "closingSquareBracket",
@@ -511,6 +513,8 @@ UNICODES = Hash[
 "raisedDot"  => "\u0387",
 "semicolon" => "\u037E",
 "elisionMark" => "\u1FBD",
+"comma" => "\u002C",
+"period" => "\u002E",
 
 "openingSquareBracket" => "\u005B",
 "closingSquareBracket" => "\u005D",
