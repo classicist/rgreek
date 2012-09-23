@@ -64,7 +64,6 @@ describe "Betacode to Unicode C Conversion" do
   end
   
   it "should convert unicode to betacode" do
-    pending
     Transcoder.unicode_to_betacode("πῶς ").should == "pw=s "
     Transcoder.unicode_to_betacode("πῶς").should == "pw=s"
     Transcoder.unicode_to_betacode("⟦Ἤχω⟧·").should == "[4*h)/xw]4\:"
@@ -88,7 +87,7 @@ describe "Betacode to Unicode C Conversion" do
   end
 
   it "should change all known unicode chars to betacode and back without loss" do    
-        pending    
+      pending
       all_known_unicode_chars = Transcoder::UNICODES.values.join      
       betacodes = Transcoder.unicode_to_betacode(all_known_unicode_chars)      
       result_unicode = Transcoder.betacode_to_unicode(betacodes)

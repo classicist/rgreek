@@ -10,7 +10,7 @@ module RGreek
     def self.unicode_to_betacode(unicode)
       unicode.split("").map do |unichar|
         beta_token = REVERSE_UNICODES[unichar]
-        beta_token.split("_").map { |token| REVERSE_BETA_CODES[token] }
+        beta_token.split("_").map { |token| selectively_clean_betacode REVERSE_BETA_CODES[token] }
       end.join.downcase
     end
     
@@ -18,6 +18,11 @@ module RGreek
       REVERSE_UNICODES[unicode]
     end
 private
+    
+    def self.selectively_clean_betacode(betacode) 
+      betacode.gsub("S2", "s")  #return "s" for final sigma code bc we prefer to tell final sigma by position to by unique S2 code
+    end
+    
     def self.convert_to_unicode(betacode_tokens)
       current_index = 0
       unicode = ""
@@ -61,7 +66,7 @@ private
         last_char           = current_index     > 0               ? betacode[current_index - 1] : ""
         next_char           = current_index     < betacode.length ? betacode[current_index + 1] : ""
 
-        is_final_sigma      = match?(current_char, /s/)    && (next_char ==nil || match?(next_char, /\W/))                            
+        is_final_sigma      = match?(current_char, /s/)    && (next_char == nil || match?(next_char, /\W/))                            
         is_letter           = match?(current_char, LETTER) && !isBetaCodePrefix(last_char) && !match?(next_char, /\d/) && !is_final_sigma
         is_capital          = match?(current_char, LETTER) && match?(last_char, /\*/) && !match?(next_char, /\d/)
         is_diacrital        = isBetaCodeDiacritical(current_char)
