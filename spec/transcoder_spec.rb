@@ -94,10 +94,10 @@ describe "Betacode to Unicode C Conversion" do
       all_known_betacode_chars = Transcoder::BETA_CODES.keys.join(",")      
       unicodes = Transcoder.betacode_to_unicode(all_known_betacode_chars)      
       result_betacode = Transcoder.unicode_to_betacode(unicodes)
-      (all_known_betacode_chars.split(",") - result_betacode.split(",")).sort.should == ["s2"]   
-
+      
     #Final Sigma ("s2") appears to be lost, but is not because we test for it by position so that we can return regular "s" in our 
     #generated betacode than the anoying-to-read "s2"     
+      (all_known_betacode_chars.split(",") - result_betacode.split(",")).sort.should == ["s2"]   
   end
 
   it "should change roundtrip unicode -> betacode -> unicode for all known betacodes except final sigma" do
@@ -118,5 +118,4 @@ describe "Betacode to Unicode C Conversion" do
       Transcoder.betacode_to_unicode("s2").should == "ς"       
       Transcoder.betacode_to_unicode("sa").should == "σα"     
   end
-
 end
