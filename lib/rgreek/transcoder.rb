@@ -13,7 +13,10 @@ module RGreek
         beta_token.split("_").map { |token| REVERSE_BETA_CODES[token] }
       end.join.downcase
     end
-
+    
+    def self.name_of_unicode_char(unicode)
+      REVERSE_UNICODES[unicode]
+    end
 private
     def self.convert_to_unicode(betacode_tokens)
       current_index = 0
@@ -57,8 +60,9 @@ private
         penultimate_char    = current_index - 1 > 0               ? betacode[current_index - 2] : ""   
         last_char           = current_index     > 0               ? betacode[current_index - 1] : ""
         next_char           = current_index     < betacode.length ? betacode[current_index + 1] : ""
-                            
-        is_letter           = match?(current_char, LETTER) && !isBetaCodePrefix(last_char) && !match?(next_char, /\d/)
+
+        is_final_sigma      = match?(current_char, /s/)    && (next_char ==nil || match?(next_char, /\W/))                            
+        is_letter           = match?(current_char, LETTER) && !isBetaCodePrefix(last_char) && !match?(next_char, /\d/) && !is_final_sigma
         is_capital          = match?(current_char, LETTER) && match?(last_char, /\*/) && !match?(next_char, /\d/)
         is_diacrital        = isBetaCodeDiacritical(current_char)
         is_crazy_sigma      = match?(current_char, /\d/) && match?(last_char, /S/) 
@@ -72,6 +76,8 @@ private
 
         if is_letter || is_punctuation || is_diacrital || is_a_crux          
            lookup_betacode(current_char)
+         elsif is_final_sigma
+           lookup_betacode("S2")
         elsif is_capital || is_a_critical_mark
            lookup_betacode(last_char + current_char)
         elsif is_crazy_sigma || is_kop_or_samp
@@ -173,10 +179,7 @@ BETA_CODES = Hash[
 "%" => "crux",
 "%2" => "asterisk",
 "%5" => "longVerticalBar",
-#"%40" => "longum",
-#"%41" => "breve",
 
-#"S1" => "sigmaMedial",
 "S2" => "sigmaFinal",
 "S3" => "sigmaLunate",
 "*S3" => "SigmaLunate",
