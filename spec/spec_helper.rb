@@ -6,9 +6,11 @@ require 'equivalent-xml'
 require 'rgreek'
   include RGreek
   
-def get_entry_fixture(safe_headword)
+NEXT_ENTRY = "chicago_next_entry.html"
+
+def get_html_fixture(filename)
   root = File.expand_path(File.dirname(__FILE__))
-  File.read(File.join(root, "fixtures/lsj_#{safe_headword}_entry.html"))
+  Nokogiri::HTML(File.read(File.join(root, "fixtures/#{filename}")))
 end
 
 def xml_should_be_equal(left, right, opts = {:element_order => true, :normalize_whitespace => true})
