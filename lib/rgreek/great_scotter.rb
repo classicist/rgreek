@@ -26,6 +26,22 @@ module RGreek
         nil
       end
     end
+    
+    def self.get_all_entries
+      start = Time.now
+      puts "Starting attempt to get_all_entries at #{start}"
+      first_entry_page = get_url(FIRST_ENTRY)   
+      create_entry(first_entry_page)
+      link_to_next_entry = next_link(first_entry_page)
+      
+      while link_to_next_entry
+        puts "Trying: #{link_to_next_entry}..."
+        next_entry_page = get_url(link_to_next_entry)
+        lsj_entry = create_entry(next_entry_page)
+        puts "Successfully Created: #{lsj_entry.headword}, #{Time.now - start} elapsed"
+        link_to_next_entry = get_next_entry(next_entry_page)
+      end
+    end
         
     def self.create_entry(entry_page)
       headword  = get_headword(entry_page)
@@ -35,16 +51,16 @@ module RGreek
       lsj
     end
     
-    def self.get_headword(entry)
-      entry.css("span.head").text
+    def self.get_headword(entry_page)
+      entry_page.css("span.head").text
     end
     
     def self.get_entry(entry_page)
       entry_page.css("div2").to_html
     end
     
-    def self.next_link(entry)
-      entry.traverse do |node|        
+    def self.next_link(entry_page)
+      entry_page.traverse do |node|        
         if ['a'].include?(node.name) && node.text.include?("Next Entry")
           return next_entry_link = node['href'] 
         end        

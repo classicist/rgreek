@@ -21,6 +21,8 @@ when "unicode_to_betacode"
     respond("please input the unicode text you would like transcoded to betacode") do |args| Transcoder.unicode_to_betacode(args.join) end
 when "parse"
     respond("please input the greek word you would like parsed using betacode") do |args| Parse.find_parses_hashed_by_lemma(args.join) end
+when "get_all_entries"
+    respond("Good luck and Godspeed") do |args| GreatScotter.get_all_entries end
 else
   puts "choose a command: betacode_to_unicode, unicode_to_betacode, or parse"
   exit 1
