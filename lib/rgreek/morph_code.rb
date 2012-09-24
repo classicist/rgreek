@@ -1,5 +1,5 @@
 module RGreek
-  class MorphCode
+  module MorphCode
     
   def self.convert_to_english(code)
     index = 0;

@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require File.dirname(__FILE__) + '/spec_helper'
+require 'spec_helper'
 
 describe "The Betacode Tokenizer" do
   it "should give the name of a betacode token for the regular alphabet" do
@@ -135,7 +135,7 @@ describe "Betacode to Unicode C Conversion" do
   end
   
   it "should should automatically transcode beta and unicode" do
-    beta, uni = "kai/", "καί"
+    beta, uni = "kai/s", "καίς"
     Transcoder.convert(beta).should == uni
     Transcoder.convert(uni).should == beta            
   end

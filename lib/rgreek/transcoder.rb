@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 module RGreek
-  class Transcoder
+  module Transcoder
     
     def self.convert(code)
       if is_betacode?(code)
@@ -12,7 +12,8 @@ module RGreek
         raise "#{code} is neither valid unicode nor betacode -- let's try to keep it clean fellahs"
       end
     end
-    
+
+private   
     def self.betacode_to_unicode(betacode)
       betacode_tokens = tokenize(betacode)
       convert_to_unicode(betacode_tokens)
@@ -28,7 +29,6 @@ module RGreek
     def self.name_of_unicode_char(unicode)
       REVERSE_UNICODES[unicode]
     end
-private
     
     def self.selectively_clean_betacode(betacode) 
       betacode.gsub("s2", "s")  #return "s" for final sigma code bc we prefer to tell final sigma by position to by unique S2 code

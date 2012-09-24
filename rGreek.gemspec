@@ -20,5 +20,10 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rspec"
   gem.add_development_dependency "sqlite3"  
   gem.add_development_dependency "activerecord"  
-  gem.add_development_dependency "sinatra"    
+  gem.add_development_dependency "sinatra"
+  gem.add_development_dependency "httparty"    
+  gem.add_development_dependency 'nokogiri'
+  gem.add_development_dependency 'equivalent-xml'
+  gem.add_development_dependency 'nokogiri-diff'
+
 end
