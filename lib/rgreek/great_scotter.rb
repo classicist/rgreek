@@ -14,22 +14,36 @@ module RGreek
     FIRST_ENTRY = "http://artflx.uchicago.edu/cgi-bin/philologic/getobject.pl?c.1:1:0.LSJ"
     
     def self.get_first_entry
-      entry_page = get_url(FIRST_ENTRY)
-      entry_page.css("div2").to_html
+      get_entry get_url(FIRST_ENTRY)      
     end
  
     def self.get_next_entry(last_entry_url)
       last_entry = get_url(last_entry_url)
       next_entry_link = next_link(last_entry)
       if next_entry_link
-        get_url(DOMAIN + next_entry_link).css("div2").to_html
+        get_entry get_url(DOMAIN + next_entry_link)
       else
         nil
       end
     end
+        
+    def self.create_entry(entry_page)
+      headword  = get_headword(entry_page)
+      entry     = get_entry entry_page
+      lsj = LsjEntry.create(headword: headword, entry: entry)
+      lsj.save!
+      lsj
+    end
+    
+    def self.get_headword(entry)
+      entry.css("span.head").text
+    end
+    
+    def self.get_entry(entry_page)
+      entry_page.css("div2").to_html
+    end
     
     def self.next_link(entry)
-#      STDOUT << entry
       entry.traverse do |node|        
         if ['a'].include?(node.name) && node.text.include?("Next Entry")
           return next_entry_link = node['href'] 
@@ -51,7 +65,6 @@ module RGreek
       else
         raise "#{MANY_OBJECTS_FOUND} for #{unicode_headword}: #{response.to_html}"
       end
-
     end
     
     def get_entry_from_page(dictionary_link)

@@ -1,4 +1,6 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+ENV["RGREEK_ENV"] = "test"
+
 require 'nokogiri'
 require "nokogiri/diff"
 require 'equivalent-xml'
@@ -6,7 +8,8 @@ require 'equivalent-xml'
 require 'rgreek'
   include RGreek
   
-NEXT_ENTRY = "chicago_next_entry.html"
+ENTRY_PAGE  = "chicago_lsj_entry_page.html"
+ENTRY       = "chicago_lsj_entry.html"
 
 def get_html_fixture(filename)
   root = File.expand_path(File.dirname(__FILE__))
