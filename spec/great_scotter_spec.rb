@@ -42,24 +42,6 @@ end
     entry = GreatScotter.get_first_entry
     entry.should =~ @entry_pattern
   end
-  
-  it "should get multiple entries for a single word" do
-    pending
-    headword = "λέγω"
-    should_be_an_lsj_entry headword, GreatScotter.entry(headword)
-  end
-  
-  it "should should find nothing" do
-    pending
-    headword = "alkajsdfj"
-    GreatScotter.entry(headword).should == GreatScotter::NO_OBJECTS_FOUND
-  end
-  
-  it "should get an entry by its headword" do
-    pending
-    headword = "πῶς"
-    should_be_an_lsj_entry headword, GreatScotter.entry(headword)
-  end
 end
 
 FIXTURE_BY_URL = {GreatScotter::FIRST_ENTRY => ENTRY_PAGE}
