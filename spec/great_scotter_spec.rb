@@ -24,13 +24,17 @@ end
     GreatScotter.increment_major_uri(url).should == "/cgi-bin/philologic/getobject.pl?c.2:1:0.LSJ"
   end
 
-  it "should should test for the presence of a headword" do
+  it "should test for the presence of a headword" do
     GreatScotter.has_headword?(@entry_url).should == true
     GreatScotter.has_headword?(NO_ENTRY_URL).should == false
   end
-
+  
   it "should get the headword of an lsj entry" do
     GreatScotter.get_headword(@entry_page).should == @headword
+  end
+  
+  it "should get the entry of an lsj entry" do
+    GreatScotter.get_entry(@entry_page).should == @entry
   end
 
   it "should create an lsj entry" do
