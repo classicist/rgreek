@@ -24,6 +24,11 @@ end
     GreatScotter.increment_major_uri(url).should == "/cgi-bin/philologic/getobject.pl?c.2:1:0.LSJ"
   end
 
+  it "should should test for the presence of a headword" do
+    GreatScotter.has_headword?(@entry_url).should == true
+    GreatScotter.has_headword?(NO_ENTRY_URL).should == false
+  end
+
   it "should get the headword of an lsj entry" do
     GreatScotter.get_headword(@entry_page).should == @headword
   end
@@ -44,12 +49,16 @@ end
   end
 end
 
-FIXTURE_BY_URL = {GreatScotter::FIRST_ENTRY => ENTRY_PAGE}
+FIXTURE_BY_URL = {GreatScotter::FIRST_ENTRY => ENTRY_PAGE, NO_ENTRY_URL => NO_ENTRY}
 
 def stub_in_filesystem_fixture_for_http
   GreatScotter.class_eval(%Q[
   def self.get_url(url)
     get_html_fixture FIXTURE_BY_URL[url]
+  end
+  
+  def self.get_page(url)
+    get_url(url)
   end
 ])
 end

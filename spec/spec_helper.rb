@@ -10,6 +10,8 @@ require 'rgreek'
   
 ENTRY_PAGE  = "chicago_lsj_entry_page.html"
 ENTRY       = "chicago_lsj_entry.html"
+NO_ENTRY    = "null_fixture.html"
+NO_ENTRY_URL   = "fail.com"
 
 def get_html_fixture(filename)
   root = File.expand_path(File.dirname(__FILE__))

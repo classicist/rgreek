@@ -39,10 +39,10 @@ module RGreek
       minor = increment_minor_uri(last_working_url)
       major = increment_major_uri(last_working_url)
      
-      if increment_good?(minor)
+      if has_headword?(minor)
         puts "incementing minor to: #{minor}"
         minor
-      elsif increment_good?(major)
+      elsif has_headword?(major)
         puts "incementing major to: #{major}"        
         major
       else
@@ -50,7 +50,7 @@ module RGreek
       end
     end
     
-    def self.increment_good?(url)
+    def self.has_headword?(url)
       h = get_headword( get_page(url) )
       puts "headword test: #{h}"
       h != nil && h != ""
