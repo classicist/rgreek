@@ -13,6 +13,25 @@ module RGreek
       end
     end
 
+    def self.tonos_to_oxia(tonos)
+#for i in 0x03ac..0x03cf 
+#   puts i 
+#end
+ puts 0x03ad-0x03ac
+   #tonosToOxiaTranslationTable = [0x03cf-0x03ac];
+ #    for (int i = 0x03ac; i < 0x03cf; i++) 
+ #	tonosToOxiaTranslationTable[i-0x03ac] = i;
+ #	#alpha to omega with tonos => oxia, no other accents or breathings
+ #	tonosToOxiaTranslationTable[0x03ac-0x03ac] = 0x1f71;
+ #	tonosToOxiaTranslationTable[0x03ad-0x03ac] = 0x1f73;
+ #	tonosToOxiaTranslationTable[0x03ae-0x03ac] = 0x1f75;
+ #	tonosToOxiaTranslationTable[0x03af-0x03ac] = 0x1f77;
+ #	tonosToOxiaTranslationTable[0x03cc-0x03ac] = 0x1f79;
+ #	tonosToOxiaTranslationTable[0x03cd-0x03ac] = 0x1f7b;
+ #	tonosToOxiaTranslationTable[0x03cd-0x03ac] = 0x1f7d;
+ #
+    end
+
 private   
     def self.betacode_to_unicode(betacode)
       betacode_tokens = tokenize(betacode)
