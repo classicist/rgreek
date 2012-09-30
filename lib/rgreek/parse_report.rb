@@ -16,7 +16,7 @@ class ParseReport
     end
     
     def to_s
-      "#{lemma.to_greek}: #{lemma.short_def}, " + parses.map { |parse| "#{parse.morph_code_pretty}" }.join("\n")
+      "#{lemma.greek_headword}: #{lemma.short_def}, " + parses.map { |parse| "#{parse.morph_code_pretty}" }.join("\n")
     end
 end#EOC
 end#EOM
