@@ -1,5 +1,7 @@
 module RGreek
 class Parse < ActiveRecord::Base       
+  belongs_to :lemma
+  
     def self.find_parses(word)
       if has_accents?(word)
         sort find_all_by_form(word)

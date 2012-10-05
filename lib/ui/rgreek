@@ -24,7 +24,8 @@ when "unicode_to_betacode"
 when "parse"
     respond("please input the greek word you would like parsed using betacode") do |args| Parse.find_parses_hashed_by_lemma(args.join) end
 when "transact"
-    ActiveRecord::Base.transaction do |t| puts "Trans-acting!" end
+  #Lemma.find_all_by_lang_id(2).each { |l| l.greek_headword = Transcoder.convert(l.headword); l.save! }
+    ActiveRecord::Base.transaction do |t| p "transact" end
 else
   puts "choose a command: betacode_to_unicode, unicode_to_betacode, or parse"
   exit 1
