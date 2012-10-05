@@ -14,25 +14,14 @@ module RGreek
     end
 
     def self.tonos_to_oxia(tonos)
-#for i in 0x03ac..0x03cf 
-#   puts i 
-#end
- puts 0x03ad-0x03ac
-   #tonosToOxiaTranslationTable = [0x03cf-0x03ac];
- #    for (int i = 0x03ac; i < 0x03cf; i++) 
- #	tonosToOxiaTranslationTable[i-0x03ac] = i;
- #	#alpha to omega with tonos => oxia, no other accents or breathings
- #	tonosToOxiaTranslationTable[0x03ac-0x03ac] = 0x1f71;
- #	tonosToOxiaTranslationTable[0x03ad-0x03ac] = 0x1f73;
- #	tonosToOxiaTranslationTable[0x03ae-0x03ac] = 0x1f75;
- #	tonosToOxiaTranslationTable[0x03af-0x03ac] = 0x1f77;
- #	tonosToOxiaTranslationTable[0x03cc-0x03ac] = 0x1f79;
- #	tonosToOxiaTranslationTable[0x03cd-0x03ac] = 0x1f7b;
- #	tonosToOxiaTranslationTable[0x03cd-0x03ac] = 0x1f7d;
- #
+      tonos.split("").map{ |char| TONOS_TO_OXIA_TABLE[char] || char }.join("")
     end
 
 private   
+    def self.is_tonos(char)
+      char >= 0x03ac && char < 0x03cf
+    end
+    
     def self.betacode_to_unicode(betacode)
       betacode_tokens = tokenize(betacode)
       convert_to_unicode(betacode_tokens)
@@ -102,7 +91,7 @@ private
         is_diacrital        = isBetaCodeDiacritical(current_char)
         is_crazy_sigma      = match?(current_char, /\d/) && match?(last_char, /[sS]/) 
         is_kop_or_samp      = match?(current_char, /\d/) && match?(last_char, /#/) 
-        is_punctuation      = match?(current_char, /[#\:;',\.]/) && !match?(next_char, /\d/)
+        is_punctuation      = match?(current_char, /[\#\:\;\'\,\.\-]/) && !match?(next_char, /\d/)
         is_a_bracket        = match?(current_char, /\[|\]/)
         is_a_crux           = match?(current_char, /\%/) && !match?(next_char, /\d/)
         is_a_critical_mark  = match?(current_char, /\d/) && match?(last_char, /\%/) && !match?(next_char, /\d/)        
@@ -236,9 +225,10 @@ BETA_CODES = Hash[
 "#" => "prime",
 "\:" => "raisedDot",
 ";" => "semicolon",
-"'" => "elisionMark",
+"\u0027" => "elisionMark", #also apostrophe, should change to koronis \u1fbd
 "," => "comma",
 "." => "period",
+"-" => "hyphen",
  
 "[" => "openingSquareBracket",
 "]" => "closingSquareBracket",
@@ -550,6 +540,7 @@ UNICODES = Hash[
 "elisionMark" => "\u1FBD",
 "comma" => "\u002C",
 "period" => "\u002E",
+"hyphen" => "\u002D",
 
 "openingSquareBracket" => "\u005B",
 "closingSquareBracket" => "\u005D",
@@ -566,8 +557,33 @@ UNICODES = Hash[
 "longVerticalBar" => "\u007C",
 ]
 
+#As far as I can tell, there are no tonos + breathings or iota subscript 
+#combinations bc tonos was a symbol for modern not polytonic greek
+#if that is true, this table should be comprehensive
+TONOS_TO_OXIA_TABLE = Hash[
+#tonos   => #oxia
+"\u0386" => "\u1FBB", #capital letter alpha
+"\u0388" => "\u1FC9", #capital letter epsilon       
+"\u0389" => "\u1FCB", #capital letter eta
+"\u038C" => "\u1FF9", #capital letter omicron
+"\u038A" => "\u1FDB", #capital letter iota
+"\u038E" => "\u1FF9", #capital letter upsilon
+"\u038F" => "\u1FFB", #capital letter omega
+                
+"\u03AC" => "\u1F71", #small letter alpha
+"\u03AD" => "\u1F73", #small letter epsilon
+"\u03AE" => "\u1F75", #small letter eta
+"\u0390" => "\u1FD3", #small letter iota with dialytika and tonos/oxia
+"\u03AF" => "\u1F77", #small letter iota
+"\u03CC" => "\u1F79", #small letter omicron
+"\u03B0" => "\u1FE3", #small letter upsilon with with dialytika and tonos/oxia
+"\u03CD" => "\u1F7B", #small letter upsilon
+"\u03CE" => "\u1F7D"  #small letter omega
+]
+
 REVERSE_BETA_CODES ||= BETA_CODES.invert
 REVERSE_UNICODES   ||= UNICODES.invert
+VALID_UNICODE ||= REVERSE_UNICODES
 SHARED_TOKENS = (UNICODES.values & BETA_CODES.keys).map { |v|  BETA_CODES[v] }
 
   end#EOC

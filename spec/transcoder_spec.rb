@@ -141,46 +141,46 @@ describe "Betacode to Unicode C Conversion" do
   end
   
   it "should transcode tonos accents to oxias" do
-pending
-    oxia  = "ί"
+    oxia  = "ί"
     tonos = "ί"
+    tonos.should === "\u03af"
     Transcoder.tonos_to_oxia(tonos).should == oxia
   end
+  
+  it "should convert a word with tonoi to a word with oxiai without screwing up the uninvolved chars" do
+    kaiw_oxia = "καίω"
+    kaiw_tonos = "καίω"
+    kaiw_oxia.should_not == kaiw_tonos
+    Transcoder.tonos_to_oxia(kaiw_tonos).should == kaiw_oxia
+  end
+  
+  it "should not hurt words that do not have a tonos in them" do
+    kaiw_oxia = "καίωbaldinadfioadfm2<>\.o4./+-1[}{]"
+    Transcoder.tonos_to_oxia(kaiw_oxia).should == kaiw_oxia
+  end
+  
+ #it "should convert tonoi in lsj definitions to oxia" do
+ #  LsjEntry.find(:all).each do |article| 
+ #    article.entry = Transcoder.tonos_to_oxia(article.entry)
+ #    article.save!
+ #  end
+ #end
+ # it "should account for all unicode letters in lsj headword" do
+ #   fuct = LsjEntry.find(:all).map do |entry| 
+ #     invalid_headword = nil
+ #     entry.headword.split("").each do |char| 
+ #       if !Transcoder::VALID_UNICODE[char]  
+ #         invalid_headword = "#{entry.headword} : #{entry.id}"
+ #       end        
+ #     end
+ #     invalid_headword
+ #   end.compact
+ #   fuct.should == []
+ # end
   
     #hypothesis: all chicago headwords (greek?) are encoded using tonos instead of oxia for acute accent
   #possible solution: all (?) letters encoded with oxia have for thier decomposition the same letter with tonos
   #TODO: transcode all tonoses to oxia in db
-#http://wordhoard.northwestern.edu/userman/javadoc/edu/northwestern/at/wordhoard/model/text/CharsetUtils.html#translateTonosToOxia%28java.lang.String%29
-#	private static int[] tonosToOxiaTranslationTable =
-#		new int[0x03cf-0x03ac];	
-#		
-#	static {
-#		for (int i = 0x03ac; i < 0x03cf; i++) 
-#			tonosToOxiaTranslationTable[i-0x03ac] = i;
-#		tonosToOxiaTranslationTable[0x03ac-0x03ac] = 0x1f71;
-#		tonosToOxiaTranslationTable[0x03ad-0x03ac] = 0x1f73;
-#		tonosToOxiaTranslationTable[0x03ae-0x03ac] = 0x1f75;
-#		tonosToOxiaTranslationTable[0x03af-0x03ac] = 0x1f77;
-#		tonosToOxiaTranslationTable[0x03cc-0x03ac] = 0x1f79;
-#		tonosToOxiaTranslationTable[0x03cd-0x03ac] = 0x1f7b;
-#		tonosToOxiaTranslationTable[0x03cd-0x03ac] = 0x1f7d;
-#	}
-
-
-#  it "should be the same bytes" do
-#    greek_copied_from_db = ""  # "καί" #\u03AF -- greek iota with tonos
-#    typed_greek =              # "καί"         #\u1F77  -- greek iota with oxia 
-#
-#p "typed greek #{typed_greek}"
-#    typed_greek.each_char do |c|
-#      puts c.unpack('U*').first
-#    end
-#    
-#p "database greek #{greek_copied_from_db}"
-#    greek_copied_from_db.each_char do |c|
-#      puts c.unpack('U*').first
-#    end    
-#  end
-#  
+#http://wordhoard.northwestern.edu/userman/javadoc/edu/northwestern/at/wordhoard/model/text/CharsetUtils.html#translateTonosToOxia%28java.l 
 
 end

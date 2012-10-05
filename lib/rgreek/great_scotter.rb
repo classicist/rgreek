@@ -52,7 +52,7 @@ module RGreek
     
     def self.has_headword?(url)
       h = get_headword( get_page(url) )
-      puts "headword test: #{h}"
+     # puts "headword test: #{h}"
       h != nil && h != ""
     end
     
