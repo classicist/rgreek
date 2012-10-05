@@ -139,7 +139,9 @@ describe "Betacode to Unicode C Conversion" do
     Transcoder.convert(beta).should == uni
     Transcoder.convert(uni).should == beta            
   end
-  
+end
+
+describe "Tonos converter" do
   it "should transcode tonos accents to oxias" do
     oxia  = "ί"
     tonos = "ί"
@@ -182,5 +184,4 @@ describe "Betacode to Unicode C Conversion" do
   #possible solution: all (?) letters encoded with oxia have for thier decomposition the same letter with tonos
   #TODO: transcode all tonoses to oxia in db
 #http://wordhoard.northwestern.edu/userman/javadoc/edu/northwestern/at/wordhoard/model/text/CharsetUtils.html#translateTonosToOxia%28java.l 
-
 end
