@@ -141,7 +141,7 @@ describe "Betacode to Unicode C Conversion" do
   end
   
   it "should transcode tonos accents to oxias" do
-    pending
+pending
     oxia  = "ί"
     tonos = "ί"
     Transcoder.tonos_to_oxia(tonos).should == oxia
