@@ -1,9 +1,7 @@
 module RGreek
 class Parse < ActiveRecord::Base       
   belongs_to :lemma
-  default_scope order("lemma_id asc")
-  default_scope order("dialects desc")
-  default_scope order("morph_code asc")
+  default_scope order("lemma_id asc").order("dialects desc").order("morph_code asc")
   
     def self.find_parses(word)
       if has_accents?(word)
@@ -25,12 +23,6 @@ class Parse < ActiveRecord::Base
     def self.has_accents?(word)
       (word =~ /.*\W/) != nil
     end
-    
-    #def self.sort(results)
-    # # in-memory sort is required because default_scope order(:dialects) is CRAZY slow for some reason
-    # # also should be OK because we are only pulling back a handful of records at a time
-    #  results.sort_by { |r| [r.lemma_id, r.dialects || ""] }
-    #end
   
     def english_morph_code
       MorphCode.convert_to_english(morph_code)
