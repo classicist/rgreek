@@ -17,14 +17,13 @@ class PerseusScraper
       map_each_lemma_table_in(page) do |lemma_table|
         lemma_data                = lemma_data_for(lemma_table)
         lemma_data[:morphologies] = morph_data_for(lemma_data[:morphologies])
-        do_block(lemma, lemma_data[:short_def], lemma_data[:morphologies], block)      
+        do_block(lemma, lemma_data[:short_def], lemma_data[:morphologies], &block)      
       end
   end
 
 private
   def do_block(lemma, short_def, parse_data, &block)
     case block.arity
-      when 1 then yield lemma
       when 2 then yield lemma, short_def
       when 3 then yield lemma, short_def, parse_data
     else
@@ -56,39 +55,41 @@ private
 
   def lemma_data_for(lemma_table)
     lemma_data = {}
-    lemma_table             = Nokogiri::HTML(lemma_table.to_html) # we must do this or Noko will search the whole doc, not just the table
-   #lemma_data[:headword]   = Transcoder.tonos_to_oxia lemma_table.xpath("//th[contains(@class,'lemma')]").text
-    lemma_data[:short_def]  = Transcoder.tonos_to_oxia lemma_table.xpath("//th[contains(@class,'shortdef')]").text
-    lemma_data[:parse_rows] = lemma_table.css("tr.parserow").children
+    lemma_table               = Nokogiri::HTML(lemma_table.to_html) # we must do this or Noko will search the whole doc, not just the table
+   #lemma_data[:headword]     = Transcoder.tonos_to_oxia lemma_table.xpath("//th[contains(@class,'lemma')]").text
+    lemma_data[:short_def]    = Transcoder.tonos_to_oxia lemma_table.xpath("//th[contains(@class,'shortdef')]").text
+    lemma_data[:morphologies] = lemma_table.css("tr.parserow").children
     lemma_data
   end
 
   def morphology_url_for(lemma)
-    escaped_greek_word = escape_headword(lemma.greek_headword)
-    "http://perseus.uchicago.edu/perseus-cgi/morph.pl?token=#{escaped_greek_word}&lang=greek"
+    escaped_greek_word = escape_headword(lemma.unicode_headword)
+    "http://perseus.uchicago.edu/perseus-cgi/morph.pl?token=#{escaped_greek_word}&lang=#{lemma.lang}"
   end
 
-  def escape_headword
-    CGI.escape(Transcoder.oxia_to_tonos(lemma.greek_headword))
+  def escape_headword(unicode_headword)
+    CGI.escape(Transcoder.oxia_to_tonos(unicode_headword))
   end
 end#EOC
 
 module PerseusDataMethods
-  def create_lemma(lemma, short_def, parse_data)
-    parse_data.each do |parsing|
-      lemma   =  Lemma.includes(:parses).find_or_create_by_headword_and_short_def(lemma.headword, short_def)
-      parse =  Parse.find_or_create_by_morph_code_and_form(parsing["token"], parsing["code"])  
-      lemma.parsings << parse
+  class << self
+    def create_lemma(lemma, short_def, parse_data)
+      parse_data.each do |parsing|
+        lemma   =  Lemma.includes(:parses).find_or_create_by_headword_and_short_def(lemma.headword, short_def)
+        parse =  Parse.find_or_create_by_morph_code_and_form(parsing["token"], parsing["code"])  
+        lemma.parsings << parse
+      end
     end
-  end
-  
-  def update_short_def(lemma, short_def)
-    if ( lemma.short_def == nil || lemma.short_def.empty?) && short_def && !short_def.empty?
-      lemma.short_def = short_def
-      lemma.save
-      puts lemma
+    
+    def update_short_def(lemma, short_def)
+      if ( lemma.short_def == nil || lemma.short_def.empty?) && short_def && !short_def.empty?
+        lemma.short_def = short_def
+        lemma.save
+        puts lemma
+      end
     end
-  end
+  end#EOMS
 end#EOM
 
 end#EOM
