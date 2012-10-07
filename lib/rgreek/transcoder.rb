@@ -17,6 +17,10 @@ module RGreek
       tonos.split("").map{ |char| TONOS_TO_OXIA_TABLE[char] || char }.join("")
     end
 
+    def self.oxia_to_tonos(oxia)
+      oxia.split("").map{ |char| OXIA_TO_TONOS_TABLE[char] || char }.join("")
+    end
+
 private   
     def self.is_tonos(char)
       char >= 0x03ac && char < 0x03cf
@@ -581,10 +585,10 @@ TONOS_TO_OXIA_TABLE = Hash[
 "\u03CE" => "\u1F7D"  #small letter omega
 ]
 
-REVERSE_BETA_CODES ||= BETA_CODES.invert
-REVERSE_UNICODES   ||= UNICODES.invert
-VALID_UNICODE ||= REVERSE_UNICODES
-SHARED_TOKENS = (UNICODES.values & BETA_CODES.keys).map { |v|  BETA_CODES[v] }
-
-  end#EOC
+OXIA_TO_TONOS_TABLE ||= TONOS_TO_OXIA_TABLE.invert
+REVERSE_BETA_CODES  ||= BETA_CODES.invert
+REVERSE_UNICODES    ||= UNICODES.invert
+VALID_UNICODE       ||= REVERSE_UNICODES
+SHARED_TOKENS         = (UNICODES.values & BETA_CODES.keys).map { |v|  BETA_CODES[v] }
+end#EOC
 end#EOM

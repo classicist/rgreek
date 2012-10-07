@@ -6,9 +6,9 @@ require "spec_helper"
 describe "GreatScotter" do
 
 before(:all) do
-  @entry_page    = get_html_fixture(ENTRY_PAGE)
   @entry_url     = GreatScotter::FIRST_ENTRY
-  @entry         = GreatScotter.get_entry get_html_fixture(ENTRY)
+  @entry_page    = get_html_fixture(ENTRY_PAGE)
+  @entry         =  GreatScotter.get_entry get_html_fixture(ENTRY)
   @headword      = "Α α"
   @next_link     = "/cgi-bin/philologic/getobject.pl?c.1:1:1.LSJ"
   @entry_pattern = /^<div2.*<\/div2>$/m
@@ -37,10 +37,11 @@ end
     GreatScotter.get_entry(@entry_page).should == @entry
   end
 
-  it "should create an lsj entry" do
+  it "should create an lsj entry then destroy it" do
     lsg_entry = GreatScotter.create_entry(@entry_page)
     lsg_entry.headword.should == @headword
     lsg_entry.entry.should == @entry
+    LsjEntry.delete(lsg_entry).should == 1
   end
 
   it "should should find the link for the next entry" do

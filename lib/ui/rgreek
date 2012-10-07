@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.push File.expand_path("../../", __FILE__)
-ENV["RGREEK_ENV"] = "development" #= "test"
+ENV["RGREEK_ENV"] = "test"
 puts "Env is: #{ENV["RGREEK_ENV"]}"
 
 require 'rgreek'
@@ -25,7 +25,14 @@ when "parse"
     respond("please input the greek word you would like parsed using betacode") do |args| Parse.find_parses_hashed_by_lemma(args.join) end
 when "transact"
   #Lemma.find_all_by_lang_id(2).each { |l| l.greek_headword = Transcoder.convert(l.headword); l.save! }
-    ActiveRecord::Base.transaction do |t| p "transact" end
+    #ActiveRecord::Base.transaction do |t| p "transact" end
+when "gitter"
+  count = 0
+  Lemma.find_all_greek_lacking_short_def.each do |lemma|
+    puts "#{count} of 1794"
+    PerseusScraper.short_def(lemma)
+    count += 1
+  end
 else
   puts "choose a command: betacode_to_unicode, unicode_to_betacode, or parse"
   exit 1

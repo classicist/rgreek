@@ -11,6 +11,9 @@ module RGreek
     NO_OBJECTS_FOUND = "No Objects Found"
     MANY_OBJECTS_FOUND = 'Many Objects Found'    
     FIRST_ENTRY = "http://artflx.uchicago.edu/cgi-bin/philologic/getobject.pl?c.1:1:0.LSJ"
+    QUERY_DIVIDER   = "?c."
+    LSJ_URI_DIVIDER = ".LSJ"
+    
     START = Time.now    
     BIG = 0
     MEDIUM = 1
@@ -72,12 +75,12 @@ module RGreek
     end
     
     def self.incrementor(last_working_url)
-      base     = last_working_url.split("?c.").first + "?c."
-      text_uri = last_working_url.split("?c.").last
-      text_uri = text_uri.gsub(".LSJ", "")            
+      base     = last_working_url.split(QUERY_DIVIDER).first + QUERY_DIVIDER
+      text_uri = last_working_url.split(QUERY_DIVIDER).last
+      text_uri = text_uri.gsub(LSJ_URI_DIVIDER, "")            
       text_uri = text_uri.split(":") 
       yield text_uri
-      base + text_uri.join(":") + ".LSJ"     
+      base + text_uri.join(":") + LSJ_URI_DIVIDER    
     end
     
     def self.get_dictionary_secion(link_to_next_entry)
@@ -101,11 +104,11 @@ module RGreek
     end
     
     def self.get_headword(entry_page)
-      entry_page.css("span.head").text
+      Transcoder.tonos_to_oxia entry_page.css("span.head").text
     end
     
     def self.get_entry(entry_page)
-      entry_page.css("div2").to_html
+      Transcoder.tonos_to_oxia entry_page.css("div2").to_html
     end
     
     def self.next_link(entry_page)
@@ -115,11 +118,6 @@ module RGreek
         end        
       end
       return nil
-    end
-    
-    def get_entry_from_page(dictionary_link)
-      entry_page = get_url DOMAIN + dictionary_link
-      entry_page.css("div2").to_html      
     end
     
     def self.get_url(url)
@@ -134,23 +132,3 @@ module RGreek
     end
   end#EOM  
 end#EOM
-
-
-## Failed, if insctuctive attempt:
-## there is some problem with chicago's website that prevents searching by unicode headword
-## in fact even transliteration searches are spotty
-## if it works in the future, this code will also work
-#   def self.entry(unicode_headword)
-#      url = BASE + QUERY_STRING.gsub('ESCAPED_HEADWORD', CGI.escape(unicode_headword))
-#     response = get_url url
-#     entries    = response.css("#content a")
-#
-#     if entries.length < 1
-#       raise "#{NO_OBJECTS_FOUND} for #{unicode_headword}" 
-#     elsif entries.length == 1
-#       single_dictionary_link = response.css("#content a")[0]['href']
-#       get_entry_from_page(single_dictionary_link)
-#     else
-#       raise "#{MANY_OBJECTS_FOUND} for #{unicode_headword}: #{response.to_html}"
-#     end
-#   end
