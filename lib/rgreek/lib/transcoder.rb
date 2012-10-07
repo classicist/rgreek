@@ -2,8 +2,8 @@
 
 module RGreek
   module Transcoder
-    
-    def self.convert(code)
+  class << self    
+    def convert(code)
       if is_betacode?(code)
         betacode_to_unicode(code)
       elsif is_unicode?(code)
@@ -13,76 +13,30 @@ module RGreek
       end
     end
 
-    def self.tonos_to_oxia(tonos)
+    def tonos_to_oxia(tonos)
       tonos.split("").map{ |char| TONOS_TO_OXIA_TABLE[char] || char }.join("")
     end
 
-    def self.oxia_to_tonos(oxia)
+    def oxia_to_tonos(oxia)
       oxia.split("").map{ |char| OXIA_TO_TONOS_TABLE[char] || char }.join("")
     end
-
-private   
-    def self.is_tonos(char)
-      char >= 0x03ac && char < 0x03cf
+    
+    def is_betacode?(code)
+      tokens = tokenize(code)
+      !(tokens - SHARED_TOKENS).empty?
     end
     
-    def self.betacode_to_unicode(betacode)
-      betacode_tokens = tokenize(betacode)
-      convert_to_unicode(betacode_tokens)
+    def is_unicode?(code)
+      code.split("").detect{ |char| !UNICODES.values.include?(char) }.nil?
     end
-    
-    def self.unicode_to_betacode(unicode)
-      unicode.split("").map do |unichar|
-        beta_token = REVERSE_UNICODES[unichar]
-        beta_token.split("_").map { |token| selectively_clean_betacode REVERSE_BETA_CODES[token] }
-      end.join.downcase
-    end
-    
-    def self.name_of_unicode_char(unicode)
+        
+    def name_of_unicode_char(unicode)
       REVERSE_UNICODES[unicode]
     end
     
-    def self.selectively_clean_betacode(betacode) 
-      betacode.gsub("s2", "s")  #return "s" for final sigma code bc we prefer to tell final sigma by position to by unique S2 code
-    end
-    
-    def self.convert_to_unicode(betacode_tokens)
-      current_index = 0
-      unicode = ""
-      while current_index < betacode_tokens.length #while loop is necessary to do index adjustmnet for making precombined accents
-        code = betacode_tokens[current_index]
-        combined_characters = combine_characters(code, current_index, betacode_tokens)
-        current_index = index_adjusted_for_combined_characters(combined_characters[:last_index], current_index)
-        unicode << lookup_unicode(combined_characters[:code])
-      end 
-      unicode
-    end
-        
-    def self.combine_characters(code, index, codes)
-      next_index = index + 1
-      next_index_in_bounds = codes.length - 1 >= next_index
-      return {code: code, last_index: index} unless next_index_in_bounds
-      
-      next_code        = codes[next_index]
-      combined_code    = code + "_" + next_code
-      it_combines = lookup_unicode(combined_code) != nil
-      
-      if it_combines
-        return combine_characters(combined_code, next_index, codes)
-      else 
-        return {code: code, last_index: index}
-      end
-    end
-    
-    def self.index_adjusted_for_combined_characters(last_index, current_index)
-        iterations = last_index - current_index
-        current_index += iterations if iterations > 0
-        current_index += 1
-        current_index      
-    end
-
+private         
     LETTER = /[a-zA-Z ]/    
-    def self.tokenize(betacode)
+    def tokenize(betacode)
       current_index = 0
       betacode.split("").map do |current_char|
         penultimate_char    = current_index - 1 > 0               ? betacode[current_index - 2] : ""   
@@ -120,35 +74,77 @@ private
       end.compact
     end
     
-    def self.is_betacode?(code)
-      tokens = tokenize(code)
-      !(tokens - SHARED_TOKENS).empty?
+    def convert_to_unicode(betacode_tokens)
+      current_index = 0
+      unicode = ""
+      while current_index < betacode_tokens.length #while loop is necessary to do index adjustmnet for making precombined accents
+        code = betacode_tokens[current_index]
+        combined_characters = combine_characters(code, current_index, betacode_tokens)
+        current_index = index_adjusted_for_combined_characters(combined_characters[:last_index], current_index)
+        unicode << lookup_unicode(combined_characters[:code])
+      end 
+      unicode
     end
     
-    def self.is_unicode?(code)
-      code.split("").detect{ |char| !UNICODES.values.include?(char) }.nil?
+    def combine_characters(code, index, codes)
+      next_index = index + 1
+      next_index_in_bounds = codes.length - 1 >= next_index
+      return {code: code, last_index: index} unless next_index_in_bounds
+      
+      next_code        = codes[next_index]
+      combined_code    = code + "_" + next_code
+      it_combines = lookup_unicode(combined_code) != nil
+      
+      if it_combines
+        return combine_characters(combined_code, next_index, codes)
+      else 
+        return {code: code, last_index: index}
+      end
     end
     
-    def self.lookup_betacode(code)
+    def index_adjusted_for_combined_characters(last_index, current_index)
+        iterations = last_index - current_index
+        current_index += iterations if iterations > 0
+        current_index += 1
+        current_index      
+    end
+
+    def betacode_to_unicode(betacode)
+      betacode_tokens = tokenize(betacode)
+      convert_to_unicode(betacode_tokens)
+    end
+    
+    def unicode_to_betacode(unicode)
+      unicode.split("").map do |unichar|
+        beta_token = REVERSE_UNICODES[unichar]
+        beta_token.split("_").map { |token| selectively_clean_betacode REVERSE_BETA_CODES[token] }
+      end.join.downcase
+    end
+    
+    def selectively_clean_betacode(betacode) 
+      betacode.gsub("s2", "s")  #return "s" for final sigma code bc we prefer to tell final sigma by position to by unique S2 code
+    end
+    
+    def lookup_betacode(code)
       BETA_CODES[code.downcase] 
     end
     
-    def self.lookup_unicode(code)
+    def lookup_unicode(code)
       UNICODES[code] #don't skrew with the case, the hash is case sensitive
     end
     
-    def self.match?(char, pattern)
+    def match?(char, pattern)
       (char =~ pattern) != nil
     end
     
-    def self.isBetaCodeDiacritical(code)
+    def isBetaCodeDiacritical(code)
         [')', '(', '/', '\\', '=', '+', '|'].include?(code)
     end
     
-    def self.isBetaCodePrefix(code)
+    def isBetaCodePrefix(code)
         ['*', '#', '%'].include?(code)  
     end
-  
+  end#EOCLASS_METHODS
 BETA_CODES = Hash[
 "a" => "alpha",
 "b" => "beta",
