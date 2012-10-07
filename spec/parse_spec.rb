@@ -6,6 +6,14 @@ describe "A Parse" do
     Parse.has_accents?("moo").should == false
     Parse.has_accents?("le/gw").should == true
   end
+
+
+  it "should get all parses for kai/; lemma_id and find_parses searches should be different" do
+    kai = Lemma.find_by_headword "kai/"        
+    parses = Parse.find_all_by_lemma_id kai.id
+    parses.length.should == 5
+    Parse.find_parses("kai/").length.should == 1
+  end
   
   it "should find a word using accents if it has them or not if it doesn't" do
     Parse.find_parses("kai/").length.should == 1

@@ -4,8 +4,8 @@ class Lemma < ActiveRecord::Base
   scope :greek, where("lang_id = 2")
   scope :latin, where("lang_id = 3")
   
-  def self.find_all_latin_lacking_short_def
-    Lemma.latin.where("short_def is NULL")
+  def self.find_all_lacking_short_def
+    Lemma.where("short_def is NULL")
   end
   
   def lsj_entry
@@ -17,7 +17,7 @@ class Lemma < ActiveRecord::Base
   end
   
   def lang
-    lang_id == "2" ? "greek" : "latin"
+    lang_id == 2 ? "greek" : "latin"
   end  
     
   def to_s
