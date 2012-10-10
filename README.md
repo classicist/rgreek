@@ -30,6 +30,7 @@ This module converts greek text between bi-directionally betacode and unicode (P
 To convert any amount of text (that will fit in your machine's memory) simply do:
 
 RGreek::Transcoder.convert(kai/) # =>  καί
+
 RGreek::Transcoder.convert(καί)  # =>  kai/
 
 Caveat Emptor:
@@ -40,11 +41,13 @@ Further, this is the behavior of all other major transcoders (such as Perseus an
 whether a sigma is final or not. Also, the Transcoder encodes acute accents to oxia, not tonos. 
 
 RGreek::Transcoder.tonos_to_oxia(unicode)
+
 RGreek::Transcoder.oxia_to_tonos(unicode)
 
 Since there are two ways in this great, wide, world to encode an acute accent in Greek, the tonos (designed for modern Greek) and the oxia (designed for polytonic greek) one sometimes needs a way to convert between them. People don't alway encode their data correctly, you know (looking at you Chicago). These methods serve that end and cover all the cases of pre-combined accents including a tonos or oxia I could find in the unicode spec. These methods take a string of any length and just ignore non-tonos/oxia chars.
 
 RGreek::Transcoder.is_betacode?(text)
+
 RGreek::Transcoder.is_unicode?(text)
 
 These should be obvious.
@@ -70,6 +73,7 @@ Debugging programming in Greek can be a real pain, so to aid in that endever rgr
 ### RGreek::Archimedes
 
 RGreek::Archimedes.greek_lemma(kai/) # => {"lu/w" => ["indecl"]}
+
 RGreek::Archimedes.latin_lemma(sed)  # => {"sed" => ["indecl"]}
 
 These are a web-client to the Archimedes service, which is built on top of the Perseus Project parse and lemma data for greek and latin words. These methods take inflected forms of words and return a hash of possible lemmas they belong to and an array of possible parsings
