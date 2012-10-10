@@ -29,7 +29,7 @@ class Parse < ActiveRecord::Base
     end
     
     def to_s
-      "#{id}: #{form}, #{english_morph_code}, lemma_d: #{lemma_id}"
+      "#{id}: #{form}, #{english_morph_code}, lemma_id: #{lemma_id}"
     end
   end
 end#EOM

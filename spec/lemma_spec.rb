@@ -26,4 +26,9 @@ describe "Lemma" do
     lackers = Lemma.find_all_lacking_short_def
     lackers.length.should > 0
   end
+
+  it "should have differnt parses" do
+    ls = Lemma.find_all_by_headword("le/gw")
+    ls[2].parses.length.should_not == ls[1].parses.length
+  end  
 end
