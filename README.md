@@ -26,7 +26,7 @@ Or install it yourself as:
 ## Usage
 
 ### RGreek::Transcoder
-This module converts Greek text bi-directionally between betacode and unicode (Pre-combined Unicode C encoding)
+This module converts Greek text bi-directionally between betacode and unicode (Pre-combined Unicode C encoding).
 To convert any amount of text (that will fit in your machine's memory) simply do:
 
     RGreek::Transcoder.convert(kai/) # =>  καί
