@@ -75,7 +75,7 @@ Debugging programming in Greek can be a real pain, so to aid in that endeavor rg
 These form a web-client to the Archimedes service, which is built on top of the Perseus Project parse and lemma data for Greek and Latin words. These methods take inflected words forms and return a hash of possible lemmas they might belong to and an array of possible parsings
 
 ### Other Things...
-The rest, well, is shall we say, stil under development for a still secret, but hopefully more exciting project. In the mean time, enjoy the tools!
+The rest, well, is shall we say, stil under development for a still secret, but hopefully even more exciting project. In the mean time, enjoy the tools!
 
 ## Contributing
 
