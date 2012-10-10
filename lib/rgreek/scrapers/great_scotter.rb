@@ -8,12 +8,9 @@ module RGreek
     DOMAIN = "http://artflx.uchicago.edu"
     BASE = "#{DOMAIN}/cgi-bin/philologic/search3torth"
     QUERY_STRING = "?dbname=LSJ&ORTHMODE=accented&dgdivhead=ESCAPED_HEADWORD&matchtype=exact&word=&CONJUNCT=PHRASE"
-    NO_OBJECTS_FOUND = "No Objects Found"
-    MANY_OBJECTS_FOUND = 'Many Objects Found'    
     FIRST_ENTRY = "http://artflx.uchicago.edu/cgi-bin/philologic/getobject.pl?c.1:1:0.LSJ"
     QUERY_DIVIDER   = "?c."
-    LSJ_URI_DIVIDER = ".LSJ"
-    
+    LSJ_URI_DIVIDER = ".LSJ"    
     START = Time.now    
     BIG = 0
     MEDIUM = 1
@@ -124,7 +121,7 @@ module RGreek
       begin
         response = get(url)
         html = Nokogiri::HTML(response.body)
-        html.css
+        html.css #Throw if we're gonna throw
         html
       rescue Exception => e
         raise "There was an error getting what you wanted from #{url} :#{response} + #{e}"

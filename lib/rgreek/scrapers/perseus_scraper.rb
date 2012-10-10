@@ -47,7 +47,7 @@ private
       when 2 then yield lemma, short_def
       when 3 then yield lemma, short_def, parse_data
     else
-      raise "Block requires one, two, or three arguments for: lemma, short_def, and parse_data"
+      raise "Block requires two or three arguments for: lemma, short_def, and parse_data"
     end
   end
   
