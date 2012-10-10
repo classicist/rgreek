@@ -47,7 +47,7 @@ Since there are two ways in this great, wide, world to encode an acute accent in
     RGreek::Transcoder.is_betacode?(text)
     RGreek::Transcoder.is_unicode?(text)
 
-What these should be obvious.
+What these do should be obvious.
 
     RGreek::Transcoder.name_of_unicode_char(c)
 
