@@ -42,7 +42,7 @@ behavior -- it is trivial to detect whether a sigma is final or not. The Transco
     RGreek::Transcoder.tonos_to_oxia(unicode)
     RGreek::Transcoder.oxia_to_tonos(unicode)
 
-Since there are two ways in this great, wide, world to encode an acute accent in Greek, the tonos (which was designed for modern Greek) and the oxia (which was designed for polytonic greek), one sometimes needs a way to convert between them. People don't always encode their data correctly, you know who you are. These methods serve that end and cover all the cases of pre-combined accents including a tonos or an oxia that I could find in the unicode spec. These methods take a string of any length. They leave any non-tonos/oxia chars well enough alone, so no worries.
+Since there are two ways in this great, wide, world to encode an acute accent in Greek, the tonos (which was designed for modern Greek) and the oxia (which was designed for polytonic greek), one sometimes needs a way to convert between them. People don't always encode their data correctly. You know who you are. These methods serve that end and cover all cases, including all pre-combined accents with a tonos or an oxia that I could find in the unicode spec. These methods take a string of any length. They leave any non-tonos/oxia chars well enough alone, so no worries.
 
     RGreek::Transcoder.is_betacode?(text)
     RGreek::Transcoder.is_unicode?(text)
