@@ -49,7 +49,7 @@ Since there are two ways in this great, wide, world to encode an acute accent in
 
 What these should be obvious.
 
-RGreek::Transcoder.name_of_unicode_char(c)
+    RGreek::Transcoder.name_of_unicode_char(c)
 
 In the case that you need to inspect some text to know what sort of encodings or characters your dealing with (and are sick of writing the same test regexs over and over again), this translates the unicode character into an English-named token. It exists so you can easily see what you've got on your hands.
 
