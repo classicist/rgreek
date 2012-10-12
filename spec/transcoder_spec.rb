@@ -160,4 +160,10 @@ describe "Tonos converter" do
     kaiw_oxia = "καίωbaldinadfioadfm2<>\.o4./+-1[}{]"
     Transcoder.tonos_to_oxia(kaiw_oxia).should == kaiw_oxia
   end
+  
+  it "should transcode omega with tonos to omega with oxia" do
+    tonos_omega = "ώ"
+    oxia_omega  = "ώ"
+    Transcoder.tonos_to_oxia(tonos_omega).should == oxia_omega
+  end
 end
