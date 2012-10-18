@@ -134,6 +134,11 @@ describe "Betacode to Unicode C Conversion" do
     Transcoder.is_unicode?(Transcoder::BETA_CODES.keys.join).should == false      
   end
   
+  it "should detect accents" do
+    Transcoder.has_accents?("moo").should == false
+    Transcoder.has_accents?("le/gw").should == true
+  end
+  
   it "should should automatically transcode beta and unicode" do
     beta, uni = "kai/s", "καίς"
     Transcoder.convert(beta).should == uni
@@ -166,4 +171,10 @@ describe "Tonos converter" do
     oxia_omega  = "ώ"
     Transcoder.tonos_to_oxia(tonos_omega).should == oxia_omega
   end
+
+# => only run when database is updated and greek or latin lemmas are added  
+#  it "should find all greek lemmas" do
+#    GreekLemma.find(:all).map { |l| l.headword if !Transcoder.is_greek?(l.headword)  }.compact.should == []
+#  end
+#
 end

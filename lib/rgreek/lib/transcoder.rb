@@ -29,6 +29,14 @@ module RGreek
     def is_unicode?(code)
       code.split("").detect{ |char| !UNICODES.values.include?(char) }.nil?
     end
+    
+    def is_greek?(word)
+      is_unicode?(word) || has_accents?(word) || !!UNACCENTED_GREEK_WORDS[word]
+    end
+    
+    def has_accents?(word)
+      (word =~ /[\)\(\\\/\=]/) != nil
+    end
         
     def name_of_unicode_char(unicode)
       REVERSE_UNICODES[unicode]
@@ -586,5 +594,63 @@ REVERSE_BETA_CODES  ||= BETA_CODES.invert
 REVERSE_UNICODES    ||= UNICODES.invert
 VALID_UNICODE       ||= REVERSE_UNICODES
 SHARED_TOKENS         = (UNICODES.values & BETA_CODES.keys).map { |v|  BETA_CODES[v] }
+
+
+UNACCENTED_GREEK_WORDS = Hash[
+"da" => true,
+"δα" => true,
+"dus" => true,
+"δυς" => true,
+"ge" => true,
+"γε" => true,
+"kalli" => true,
+"καλλι" => true,
+"la" => true,
+"λα" => true,
+"min" => true,
+"μιν" => true,
+"nin" => true,
+"νιν" => true,
+"ph" => true,
+"πη" => true,
+"poi" => true,
+"ποι" => true,
+"poqen" => true,
+"ποθεν" => true,
+"poqi" => true,
+"ποθι" => true,
+"pw" => true,
+"πω" => true,
+"pws" => true,
+"πως" => true,
+"qi" => true,
+"θι" => true,
+"se" => true,
+"σε" => true,
+"su" => true,
+"συ" => true,
+"te" => true,
+"τε" => true,
+"tis" => true,
+"τις" => true,
+"toi" => true,
+"τοι" => true,
+"za" => true,
+"ζα" => true,
+"ze" => true,
+"ζε" => true,
+"tri-" => true,
+"-fi" => true,
+"*w" => true,
+"bou-" => true,
+"-dis" => true,
+"-qen" => true,
+"m'" => true,
+"nh-" => true,
+"-sqa" => true,
+"-de" => true,
+"-qe" => true
+]
+
 end#EOC
 end#EOM

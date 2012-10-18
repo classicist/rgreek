@@ -32,6 +32,6 @@ when "gitter"
  #  count += 1
  #end
 else
-  puts "choose a command: betacode_to_unicode, unicode_to_betacode, or parse"
+  puts "choose a command: convert or parse"
   exit 1
 end

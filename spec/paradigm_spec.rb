@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Paradigm do
   before(:each) do
-    @lemma     =  Lemma.find_all_by_headword("le/gw")[2] #to say, speak
+    @lemma     =  GreekLemma.find_all_by_headword("le/gw").first #to say, speak
     @paradigm  = Paradigm.new @lemma
   end
   
