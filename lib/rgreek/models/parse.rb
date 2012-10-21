@@ -1,9 +1,10 @@
 module RGreek
 module Parse
+  include Reflector
   def find_parses_hashed_by_lemma(word)
     parses = find_parses(word)
     parses.inject({}) do |parses_hashed_by_lemma, parse| #assumes parses sorted by lemma_id      
-      lemma = GreekLemma.find_by_parse(parse)
+      lemma = lemma_class.find_by_parse(parse)
       parses_hashed_by_lemma[lemma] ? parses_hashed_by_lemma[lemma] << parse : parses_hashed_by_lemma[lemma] = [parse]
       parses_hashed_by_lemma
     end

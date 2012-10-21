@@ -1,6 +1,7 @@
 module RGreek
   
 module Lemma
+  include Reflector
   def find_all_lacking_short_def
     self.where("short_def is NULL")
   end
