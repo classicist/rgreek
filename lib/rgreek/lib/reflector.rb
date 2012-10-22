@@ -5,19 +5,27 @@ module Reflector
   
   def lemma_class(lemma_klass = nil)
     #RGreek::GreekParse -> GreekLemma
-    lemma_klass = lemma_klass ? symbol_to_qualified_classname(lemma_klass) : self.to_s.gsub("Parse", "Lemma").gsub(/.*::/, "")
+    lemma_klass = lemma_klass ? symbol_to_classname(lemma_klass) : toggled_classname
     @lemma_class ||= module_eval(lemma_klass)
   end
   
-  def symbol_to_qualified_classname(sym)
-    namespace + "::" + sym.to_s.capitalize.gsub(/_(\w)/) { $1.upcase }
-  end
-  
-  def namespace
-    to_s.gsub(/^(.*)::.*/, '\1')
+  def symbol_to_classname(sym)
+    sym.to_s.capitalize.gsub(/_(\w)/) { $1.upcase }
   end
   
   def to_parse_sym
-    self.to_s.gsub(/.*::/, "").gsub("Lemma", "Parse").gsub(/(\w)([A-Z])/) {$1 + "_" + $2}.downcase.to_sym
+    toggled_classname.gsub(/(\w)([A-Z])/) {$1 + "_" + $2}.downcase.to_sym
+  end
+  
+  def no_namespace_classname
+    self.to_s.to_s.gsub(/.*::/, "")
+  end
+  
+  def swap_lemma_and_parse(klass_name)
+    klass_name.include?("Parse") ? klass_name.gsub("Parse", "Lemma") : klass_name.gsub("Lemma", "Parse")
+  end
+  
+  def toggled_classname
+    swap_lemma_and_parse(no_namespace_classname)
   end
 end
