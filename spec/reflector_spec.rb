@@ -7,7 +7,7 @@ module RGreek
   
   class StubConventionBreaker
     extend Reflector
-    lemma_class :stub_lemma
+   # lemma_class :stub_lemma
   end
   
   class StubLemma 

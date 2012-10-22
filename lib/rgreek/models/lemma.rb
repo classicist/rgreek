@@ -33,6 +33,6 @@ class LatinLemma < ActiveRecord::Base
   def to_s
     "#{id}: #{headword} : #{short_def}" 
   end
-end
+end#EOC
 
 end#EOM
