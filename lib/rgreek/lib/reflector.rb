@@ -9,12 +9,20 @@ module Reflector
     @lemma_class ||= module_eval(lemma_klass)
   end
   
+  def parses_sym
+    titlecase_to_sym(pluralize(toggled_classname))
+  end
+  
+  def lemma_sym
+    titlecase_to_sym(toggled_classname)
+  end
+
   def symbol_to_classname(sym)
     sym.to_s.capitalize.gsub(/_(\w)/) { $1.upcase }
   end
-  
-  def to_parse_sym
-    toggled_classname.gsub(/(\w)([A-Z])/) {$1 + "_" + $2}.downcase.to_sym
+    
+  def titlecase_to_sym(word)
+    word.gsub(/(\w)([A-Z])/) {$1 + "_" + $2}.downcase.to_sym
   end
   
   def no_namespace_classname
@@ -27,5 +35,9 @@ module Reflector
   
   def toggled_classname
     swap_lemma_and_parse(no_namespace_classname)
+  end
+  
+  def pluralize(plural_in_s)
+    plural_in_s + "s"
   end
 end

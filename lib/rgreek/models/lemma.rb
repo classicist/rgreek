@@ -3,9 +3,13 @@ module RGreek
 module Lemma
   def self.included(klass)
     klass.extend(ClassMethods)
+    klass.class_eval do
+      has_many parses_sym, :foreign_key => "lemma_id"  
+    end
   end
   
   module ClassMethods
+    include Reflector
     def find_all_lacking_short_def
       self.where("short_def is NULL")
     end
@@ -18,7 +22,6 @@ end#EOM
 
 class GreekLemma < ActiveRecord::Base
   include Lemma
-  has_many :greek_parses, :foreign_key => "lemma_id"  
   alias :parses :greek_parses
   
   def lsj_entry
@@ -32,7 +35,6 @@ end#EOC
 
 class LatinLemma < ActiveRecord::Base
   include Lemma
-  has_many :latin_parses, :foreign_key => "lemma_id"
   alias :parses :latin_parses
 
   def to_s

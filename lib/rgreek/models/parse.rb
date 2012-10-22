@@ -1,11 +1,11 @@
 module RGreek
 
 module Parse
-
   def self.included(klass)
     klass.extend(ClassMethods)
     klass.class_eval do
-      default_scope order("lemma_id asc").order("dialects desc").order("morph_code asc")             
+      default_scope order("lemma_id asc").order("dialects desc").order("morph_code asc")   
+      belongs_to klass.lemma_sym          
     end    
   end
     
@@ -42,12 +42,10 @@ end#EOM
   
 class GreekParse < ActiveRecord::Base       
   include Parse
-  belongs_to :greek_lemma
 end#EOC
 
 class LatinParse < ActiveRecord::Base       
   include Parse
-  belongs_to :latin_lemma
 end#EOC
   
 end#EOM

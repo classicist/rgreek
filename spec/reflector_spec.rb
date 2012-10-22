@@ -25,7 +25,11 @@ describe Reflector do
     StubConventionBreaker.lemma_class.should == StubLemma
   end
   
-  it "should reflect the parse class symbol of a lemma by convention" do
-    StubLemma.to_parse_sym.should == :stub_parse
+  it "should reflect the plural parse class symbol of a lemma by convention" do
+    StubLemma.parses_sym.should == :stub_parses
+  end
+  
+  it "should reflect the singular lemma class symbol of a parse by convention" do
+     StubParse.lemma_sym.should == :stub_lemma
   end
 end
