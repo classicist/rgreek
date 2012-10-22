@@ -14,11 +14,11 @@ module RGreek
     end
 
     def tonos_to_oxia(tonos)
-      tonos.split("").map{ |char| TONOS_TO_OXIA_TABLE[char] || char }.join("")
+      swap_tonos_and_oxia(tonos, TONOS_TO_OXIA_TABLE)
     end
 
     def oxia_to_tonos(oxia)
-      oxia.split("").map{ |char| OXIA_TO_TONOS_TABLE[char] || char }.join("")
+      swap_tonos_and_oxia(oxia, OXIA_TO_TONOS_TABLE)
     end
     
     def is_betacode?(code)
@@ -131,6 +131,10 @@ private
     
     def selectively_clean_betacode(betacode) 
       betacode.gsub("s2", "s")  #return "s" for final sigma code bc we prefer to tell final sigma by position to by unique S2 code
+    end
+    
+    def swap_tonos_and_oxia(word, transformation_table)
+      word.split("").map{ |char| transformation_table[char] || char }.join("")
     end
     
     def lookup_betacode(code)
