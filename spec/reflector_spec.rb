@@ -4,14 +4,15 @@ module RGreek
   class StubParse
     extend Reflector
   end
+
+  class StubLemma 
+  end
   
   class StubConventionBreaker
     extend Reflector
-   # lemma_class :stub_lemma
+    lemma_class :stub_lemma
   end
   
-  class StubLemma 
-  end
 end
 
 describe Reflector do  
@@ -20,7 +21,6 @@ describe Reflector do
   end
   
   it "should refelct the correct class by configuration" do
-    pending
     StubConventionBreaker.lemma_class.should == StubLemma
   end
 end

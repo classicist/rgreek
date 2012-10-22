@@ -1,14 +1,16 @@
 module Reflector
+  class << self
+    attr_reader :lemma_class
+  end
+  
   def lemma_class(lemma_klass = nil)
     #RGreek::GreekParse -> GreekLemma
-    lemma_klass = self.to_s.gsub("Parse", "Lemma").gsub(/.*::/, "")
-    #lemma_klass = lemma_klass ? symbol_to_qualified_classname(lemma_klass) : self.to_s.gsub("Parse", "Lemma").gsub(/.*::/, "")
-    #puts "#{self.to_s} -> #{lemma_klass}"
-    const_get(lemma_klass)
+    lemma_klass = lemma_klass ? symbol_to_qualified_classname(lemma_klass) : self.to_s.gsub("Parse", "Lemma").gsub(/.*::/, "")
+    @lemma_class ||= module_eval(lemma_klass)
   end
   
   def symbol_to_qualified_classname(sym)
-    namespace + "::" + sym.to_s.split("_").collect(&:capitalize).join
+    namespace + "::" + sym.to_s.capitalize.gsub(/_(\w)/) { $1.upcase }
   end
   
   def namespace
