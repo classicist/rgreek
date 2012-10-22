@@ -5,6 +5,7 @@ module Lemma
     klass.extend(ClassMethods)
     klass.class_eval do
       has_many parses_sym, :foreign_key => "lemma_id"  
+      alias_method :parses, parses_sym
     end
   end
   
@@ -22,7 +23,6 @@ end#EOM
 
 class GreekLemma < ActiveRecord::Base
   include Lemma
-  alias :parses :greek_parses
   
   def lsj_entry
     LsjEntry.find_by_headword(greek_headword)
@@ -35,7 +35,6 @@ end#EOC
 
 class LatinLemma < ActiveRecord::Base
   include Lemma
-  alias :parses :latin_parses
 
   def to_s
     "#{id}: #{headword} : #{short_def}" 
