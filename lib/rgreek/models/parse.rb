@@ -1,10 +1,21 @@
 module RGreek
 
 module Parse
+
   def self.included(klass)
-    puts klass
     klass.extend(ClassMethods)
+    klass.class_eval do
+      default_scope order("lemma_id asc").order("dialects desc").order("morph_code asc")             
+    end    
   end
+    
+  def english_morph_code
+    MorphCode.convert_to_english(morph_code)
+  end
+  
+  def to_s
+    "#{id}: #{form}, #{english_morph_code}, lemma_id: #{lemma_id}"
+  end 
   
   module ClassMethods
      include Reflector
@@ -31,17 +42,12 @@ end#EOM
   
 class GreekParse < ActiveRecord::Base       
   include Parse
-  #lemma_class :greek_lemma
   belongs_to :greek_lemma
-  default_scope order("lemma_id asc").order("dialects desc").order("morph_code asc")
-  
-  def english_morph_code
-    MorphCode.convert_to_english(morph_code)
-  end
-  
-  def to_s
-    "#{id}: #{form}, #{english_morph_code}, lemma_id: #{lemma_id}"
-  end  
+end#EOC
+
+class LatinParse < ActiveRecord::Base       
+  include Parse
+  belongs_to :latin_lemma
 end#EOC
   
 end#EOM
