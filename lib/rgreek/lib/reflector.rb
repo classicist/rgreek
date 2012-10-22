@@ -16,4 +16,8 @@ module Reflector
   def namespace
     to_s.gsub(/^(.*)::.*/, '\1')
   end
+  
+  def to_parse_sym
+    self.to_s.gsub(/.*::/, "").gsub("Lemma", "Parse").gsub(/(\w)([A-Z])/) {$1 + "_" + $2}.downcase.to_sym
+  end
 end
