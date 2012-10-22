@@ -17,6 +17,7 @@ module Reflector
     titlecase_to_sym(toggled_classname)
   end
 
+private
   def symbol_to_classname(sym)
     sym.to_s.capitalize.gsub(/_(\w)/) { $1.upcase }
   end
