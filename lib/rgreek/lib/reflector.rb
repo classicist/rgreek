@@ -1,3 +1,4 @@
+module RGreek
 module Reflector
   class << self
     attr_reader :lemma_class
@@ -59,4 +60,5 @@ private
   def pluralize(plural_in_s)
     plural_in_s + "s"
   end
-end
+end#EOM
+end#EOM
