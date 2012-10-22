@@ -2,12 +2,10 @@ module RGreek
   module MorphCode
     
   def self.convert_to_english(code)
-    index = 0;
     return PARTS_OF_SPEECH[code[0]] + " " + INDECLINABLE if code == INDECLINABLE_CODE
     
-    code.split("").map do |letter| 
-      index += 1
-      letter == "-" ? "" : CONVERSION_TABLES[index - 1][letter] + " "
+    code.split("").each_with_index.map do |letter, index| 
+      letter == "-" ? "" : CONVERSION_TABLES[index][letter] + " "
     end.join.rstrip
   end  
 
