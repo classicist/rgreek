@@ -4,8 +4,9 @@ module Parse
   def self.included(klass)
     klass.extend(ClassMethods)
     klass.class_eval do
-      default_scope order("lemma_id asc").order("dialects desc").order("morph_code asc")   
+      include Reflector::InstanceMethods      
       belongs_to klass.lemma_sym          
+      default_scope order("lemma_id asc").order("dialects desc").order("morph_code asc")         
     end    
   end
     

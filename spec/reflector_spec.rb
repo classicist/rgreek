@@ -32,4 +32,20 @@ describe Reflector do
   it "should reflect the singular lemma class symbol of a parse by convention" do
      StubParse.lemma_sym.should == :stub_lemma
   end
+  
+  it "should detect whether a parse or lemma is greek" do
+    GreekLemma.new.is_greek?.should == true
+    LatinLemma.new.is_greek?.should == false   
+    
+    GreekParse.new.is_greek?.should == true
+    LatinParse.new.is_greek?.should == false   
+  end
+  
+  it "should detect whether a parse or lemma is latin" do
+    LatinLemma.new.is_latin?.should == true    
+    GreekLemma.new.is_latin?.should == false        
+
+    LatinParse.new.is_latin?.should == true    
+    GreekParse.new.is_latin?.should == false     
+  end
 end

@@ -3,6 +3,20 @@ module Reflector
     attr_reader :lemma_class
   end
   
+  module InstanceMethods
+    def is_greek?      
+      is_lang?("Greek")
+    end
+
+    def is_latin?
+      is_lang?("Latin")
+    end
+  private
+    def is_lang?(lang)
+      self.class.send(:strip_namespace, self.class.to_s).include?(lang.capitalize)      
+    end
+  end
+  
   def lemma_class(lemma_klass = nil)
     #RGreek::GreekParse -> GreekLemma
     lemma_klass = lemma_klass ? symbol_to_classname(lemma_klass) : toggled_classname
@@ -27,7 +41,11 @@ private
   end
   
   def no_namespace_classname
-    self.to_s.to_s.gsub(/.*::/, "")
+    strip_namespace self.to_s
+  end
+  
+  def strip_namespace(class_name)
+    class_name.gsub(/.*::/, "")
   end
   
   def swap_lemma_and_parse(klass_name)

@@ -4,6 +4,7 @@ module Lemma
   def self.included(klass)
     klass.extend(ClassMethods)
     klass.class_eval do
+      include Reflector::InstanceMethods
       has_many parses_sym, :foreign_key => "lemma_id"  
       alias_method :parses, parses_sym
     end
