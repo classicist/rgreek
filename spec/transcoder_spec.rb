@@ -126,7 +126,7 @@ describe "Betacode to Unicode C Conversion" do
 
     Transcoder.is_unicode?(uni).should == true
     Transcoder.is_unicode?(beta).should == false
-    
+     
     Transcoder.is_betacode?(Transcoder::BETA_CODES.keys.join).should == true
     Transcoder.is_betacode?(Transcoder::UNICODES.values.join).should == false
     

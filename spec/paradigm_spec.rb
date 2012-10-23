@@ -13,9 +13,4 @@ describe Paradigm do
   it "should have all the parses for that lemma" do
     @paradigm.parses.length.should == 709
   end
-  
-  it "should print each of the parses out in order" do
-    pending
-    @paradigm.print.should == "moo"
-  end
 end
