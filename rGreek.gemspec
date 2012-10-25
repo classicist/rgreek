@@ -11,7 +11,6 @@ Gem::Specification.new do |gem|
   gem.description   = %q{Light, intuituive ruby tools for working with classical Greek}
   gem.summary       = %q{Light, intuituive ruby tools for working with classical Greek}
   gem.homepage      = "https://github/psaieg/rgreek"
-  gem.home          = "https://github/psaieg/rgreek"
   
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
